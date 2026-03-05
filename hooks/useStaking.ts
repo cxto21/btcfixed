@@ -11,6 +11,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { executeTransaction } from '../config/wallets';
+import { logActivity } from '../services/activityStore';
+import { ACTIVE_NETWORK_CONFIG } from '../config/networks';
 import {
   getValidatorCommission,
   getUserPosition,
@@ -87,7 +89,7 @@ export function useStaking(validatorKey: ValidatorKey = 'AVNU'): StakingState {
       }
     } catch (err: unknown) {
       if (!mountedRef.current) return;
-      setError(err instanceof Error ? err.message : 'Error al cargar datos de staking');
+      setError(err instanceof Error ? err.message : 'Failed to load staking data');
     } finally {
       if (mountedRef.current) setIsLoading(false);
     }
@@ -113,7 +115,7 @@ export function useStaking(validatorKey: ValidatorKey = 'AVNU'): StakingState {
   const runTransaction = useCallback(
     async (buildCalls: () => Promise<import('starknet').Call[]>) => {
       if (!address || !walletId) {
-        throw new Error('Conecta tu billetera primero.');
+        throw new Error('Please connect your wallet first.');
       }
       setTxStatus('pending');
       setLastTxHash(null);
@@ -124,9 +126,10 @@ export function useStaking(validatorKey: ValidatorKey = 'AVNU'): StakingState {
         setLastTxHash(txHash);
         // Refresh position after tx confirms (small delay for indexer)
         setTimeout(() => loadData(), 4_000);
+        return txHash;
       } catch (err: unknown) {
         setTxStatus('error');
-        const msg = err instanceof Error ? err.message : 'Transacción fallida';
+        const msg = err instanceof Error ? err.message : 'Transaction failed';
         setError(msg);
         throw err;
       }
@@ -140,27 +143,31 @@ export function useStaking(validatorKey: ValidatorKey = 'AVNU'): StakingState {
 
   const stake = useCallback(
     async (amountStrk: string) => {
-      if (!address) throw new Error('No hay dirección conectada');
-      await runTransaction(() => buildStakeCalls(validatorKey, address, amountStrk));
+      if (!address) throw new Error('No address connected');
+      const txHash = await runTransaction(() => buildStakeCalls(validatorKey, address, amountStrk));
+      if (txHash) logActivity({ type: 'Stake', label: `${amountStrk} STRK`, txHash, status: 'Completed', explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl });
     },
     [address, validatorKey, runTransaction],
   );
 
   const exitIntent = useCallback(
     async (amountStrk: string) => {
-      await runTransaction(() => buildExitIntentCalls(validatorKey, amountStrk));
+      const txHash = await runTransaction(() => buildExitIntentCalls(validatorKey, amountStrk));
+      if (txHash) logActivity({ type: 'Unstake', label: `${amountStrk} STRK`, txHash, status: 'Completed', explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl });
     },
     [validatorKey, runTransaction],
   );
 
   const exit = useCallback(async () => {
-    if (!address) throw new Error('No hay dirección conectada');
-    await runTransaction(() => buildExitCalls(validatorKey, address));
+    if (!address) throw new Error('No address connected');
+    const txHash = await runTransaction(() => buildExitCalls(validatorKey, address));
+    if (txHash) logActivity({ type: 'Withdraw', label: 'STRK withdrawal', txHash, status: 'Completed', explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl });
   }, [address, validatorKey, runTransaction]);
 
   const claimRewards = useCallback(async () => {
-    if (!address) throw new Error('No hay dirección conectada');
-    await runTransaction(() => buildClaimCalls(validatorKey, address));
+    if (!address) throw new Error('No address connected');
+    const txHash = await runTransaction(() => buildClaimCalls(validatorKey, address));
+    if (txHash) logActivity({ type: 'ClaimRewards', label: 'STRK rewards', txHash, status: 'Completed', explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl });
   }, [address, validatorKey, runTransaction]);
 
   // ---------------------------------------------------------------------------

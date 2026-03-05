@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({
         <button
           onClick={handleCopyAddress}
           className="mt-2 flex items-center gap-1.5 text-[9px] font-mono font-bold text-black/30 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors"
-          title="Copiar dirección completa"
+          title="Copy full address"
         >
           {copied ? (
             <>

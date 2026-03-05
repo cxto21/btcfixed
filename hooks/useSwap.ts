@@ -11,6 +11,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { executeTransaction } from '../config/wallets';
 import { ACTIVE_TOKENS, type TokenConfig } from '../config/tokens';
 import { getQuote, buildSwapCalls, fromHex, type SwapQuote } from '../services/swap';
+import { logActivity } from '../services/activityStore';
+import { ACTIVE_NETWORK_CONFIG } from '../config/networks';
 
 export type SwapTxStatus = 'idle' | 'quoting' | 'ready' | 'pending' | 'success' | 'error';
 
@@ -121,7 +123,7 @@ export function useSwap(): SwapState {
   // ---------------------------------------------------------------------------
   const executeSwap = useCallback(async () => {
     if (!quote) throw new Error('No hay quote activo');
-    if (!address || !walletId) throw new Error('Conecta tu billetera primero');
+    if (!address || !walletId) throw new Error('Please connect your wallet first');
 
     setStatus('pending');
     setError(null);
@@ -134,18 +136,28 @@ export function useSwap(): SwapState {
       if (!mountedRef.current) return;
       setStatus('success');
       setLastTxHash(txHash);
+
+      // Log to activity store before resetting form values
+      logActivity({
+        type: 'Swap',
+        label: `${sellAmount} ${sellToken.symbol} → ${buyAmount} ${buyToken.symbol}`,
+        txHash,
+        status: 'Completed',
+        explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl,
+      });
+
       // Reset form
       setSellAmount('');
       setBuyAmount('');
       setQuote(null);
     } catch (err: unknown) {
       if (!mountedRef.current) return;
-      const msg = err instanceof Error ? err.message : 'Swap fallido';
+      const msg = err instanceof Error ? err.message : 'Swap failed';
       setError(msg);
       setStatus('error');
       throw err;
     }
-  }, [quote, address, walletId]);
+  }, [quote, address, walletId, sellAmount, buyAmount, sellToken, buyToken]);
 
   const resetStatus = useCallback(() => {
     setStatus('idle');

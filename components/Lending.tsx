@@ -58,7 +58,7 @@ const TxBanner: React.FC<TxBannerProps> = ({ txHash, status, error, onClose }) =
       {status === 'success' && txHash ? (
         <>
           <p className="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-widest">
-            ¡Transacción enviada!
+            Transaction submitted!
           </p>
           <a
             href={`${ACTIVE_NETWORK_CONFIG.explorerUrl}/tx/${txHash}`}
@@ -219,7 +219,7 @@ const SupplyTab: React.FC<SupplyTabProps> = ({
           via
         </span>
         <span className="text-[9px] font-black uppercase tracking-widest border border-black/20 dark:border-white/30 px-1.5 py-0.5 dark:text-white/50">
-          Vesu Prime Pool
+          Vesu Prime Pool · Mainnet
         </span>
       </div>
 
@@ -232,10 +232,10 @@ const SupplyTab: React.FC<SupplyTabProps> = ({
         {txStatus === 'pending' ? (
           <span className="flex items-center justify-center gap-2">
             <Loader2 size={14} className="animate-spin" />
-            Enviando…
+            Submitting…
           </span>
         ) : (
-          `Depositar ${selectedAsset?.symbol ?? ''}`
+          `Deposit ${selectedAsset?.symbol ?? ''}`
         )}
       </button>
 
@@ -279,9 +279,9 @@ const PositionsTab: React.FC<PositionsTabProps> = ({
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <TrendingUp size={32} className="text-black/20 dark:text-white/20" />
-        <p className="text-sm font-bold text-black/40 dark:text-white/40">Sin posiciones activas</p>
+        <p className="text-sm font-bold text-black/40 dark:text-white/40">No active positions</p>
         <p className="text-xs text-black/30 dark:text-white/30 max-w-[200px]">
-          Deposita un activo para empezar a generar rendimiento en Vesu.
+          Deposit an asset to start earning yield on Vesu.
         </p>
       </div>
     );
@@ -310,7 +310,7 @@ const PositionsTab: React.FC<PositionsTabProps> = ({
                 <p className="font-bold text-sm dark:text-white">
                   {position.assetAmount.toFixed(6)}
                 </p>
-                <p className="text-[10px] text-black/40 dark:text-white/40 uppercase tracking-widest">depositado</p>
+                <p className="text-[10px] text-black/40 dark:text-white/40 uppercase tracking-widest">deposited</p>
               </div>
             </div>
 
@@ -324,7 +324,7 @@ const PositionsTab: React.FC<PositionsTabProps> = ({
               ) : (
                 <ArrowDownLeft size={12} />
               )}
-              Retirar todo
+              Withdraw all
             </button>
           </div>
         );
@@ -365,8 +365,8 @@ const Lending: React.FC = () => {
   } = useLending(address, walletId);
 
   const TABS: { id: LendingTab; label: string }[] = [
-    { id: 'supply', label: 'Depositar' },
-    { id: 'positions', label: `Posiciones${positions.length ? ` (${positions.length})` : ''}` },
+    { id: 'supply', label: 'Deposit' },
+    { id: 'positions', label: `Positions${positions.length ? ` (${positions.length})` : ''}` },
   ];
 
   return (
@@ -376,7 +376,7 @@ const Lending: React.FC = () => {
         <div className="flex items-center gap-3">
           <h2 className="text-4xl font-bold tracking-tighter uppercase dark:text-white">LENDING</h2>
           <span className="text-[8px] px-2 py-0.5 font-black uppercase tracking-widest border-2 border-[#F7931A] text-[#F7931A]">
-            VESU
+            VESU · MAINNET
           </span>
         </div>
         <p className="text-black/40 dark:text-white/70 text-sm font-medium uppercase tracking-widest">
@@ -388,7 +388,7 @@ const Lending: React.FC = () => {
       {loading ? (
         <div className="flex items-center gap-2 py-6 text-black/40 dark:text-white/40">
           <Loader2 size={16} className="animate-spin" />
-          <span className="text-xs font-bold uppercase tracking-widest">Cargando tasas…</span>
+          <span className="text-xs font-bold uppercase tracking-widest">Loading rates…</span>
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-3">

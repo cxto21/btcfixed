@@ -77,11 +77,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const reply = await connector.connect();
 
       if (reply.code !== ResponseCodes.SUCCESS) {
-        throw new Error((reply as { message?: string }).message ?? 'Cartridge: conexión cancelada');
+        throw new Error((reply as { message?: string }).message ?? 'Cartridge: connection cancelled');
       }
 
       const address = (reply as { address: string }).address;
-      if (!address) throw new Error('Cartridge: no se pudo obtener dirección');
+      if (!address) throw new Error('Cartridge: could not retrieve address');
 
       setState({
         isConnected: true,
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Cartridge handles account events internally — no listener needed
       cleanupRef.current = () => {/* no-op */};
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Cartridge: conexión fallida';
+      const message = err instanceof Error ? err.message : 'Cartridge: connection failed';
       if (!silent) setState((s) => ({ ...s, isLoading: false, error: message }));
       throw err;
     }
@@ -114,13 +114,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const wallet = getWalletObject(walletId);
       if (!wallet)
         throw new Error(
-          `La billetera "${walletId}" no está instalada. Instala la extensión e intenta de nuevo.`,
+          `Wallet "${walletId}" is not installed. Please install the browser extension and try again.`,
         );
 
       await wallet.enable({ starknetVersion: 'v5' });
 
       const address = wallet.selectedAddress;
-      if (!address) throw new Error('No se pudo obtener la dirección de la billetera.');
+      if (!address) throw new Error('Could not retrieve wallet address.');
 
       setState({
         isConnected: true,
@@ -148,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cleanupRef.current = () =>
         wallet.off('accountsChanged', onAccountsChanged as (...args: unknown[]) => void);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Conexión fallida';
+      const message = err instanceof Error ? err.message : 'Connection failed';
       if (!silent) setState((s) => ({ ...s, isLoading: false, error: message }));
       throw err;
     }

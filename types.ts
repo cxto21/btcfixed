@@ -9,11 +9,3 @@ export interface TokenData {
   price: number;
   change24h: number;
 }
-
-export interface Activity {
-  id: string;
-  type: 'Bridge' | 'Stake' | 'Mint' | 'Borrow' | 'Repay';
-  amount: string;
-  status: 'Completed' | 'Pending' | 'Failed';
-  timestamp: string;
-}

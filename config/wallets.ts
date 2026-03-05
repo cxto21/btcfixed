@@ -124,7 +124,7 @@ export async function executeTransaction(
   if (walletId === 'cartridge') {
     const connector = getCartridgeConnector();
     const account = await connector.probe();
-    if (!account) throw new Error('Cartridge no conectado. Por favor reconecta tu cuenta.');
+    if (!account) throw new Error('Cartridge not connected. Please reconnect your account.');
     const result = await account.execute(calls);
     if (!result?.transaction_hash) throw new Error('Cartridge: no se devolvió hash de transacción');
     return result.transaction_hash;
@@ -133,7 +133,7 @@ export async function executeTransaction(
   const wallet = getWalletObject(walletId);
   if (!wallet) throw new Error(`Billetera "${walletId}" no disponible.`);
   const account = wallet.account as UnknownAccount;
-  if (!account?.execute) throw new Error('La billetera no soporta ejecución de transacciones.');
+  if (!account?.execute) throw new Error('Wallet does not support transaction execution.');
   const result = await account.execute(calls);
   return result.transaction_hash;
 }

@@ -1,18 +1,27 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Zap, Repeat, ArrowUpRight, CheckCircle2, Search, Filter, X, Shield, ExternalLink, Copy } from 'lucide-react';
-import { Activity } from '../types';
+import { ArrowLeft, Zap, Repeat, ArrowUpRight, CheckCircle2, Search, Filter, X, Shield, ExternalLink, Copy, ArrowDownLeft, Gift } from 'lucide-react';
+import { useActivity } from '../hooks/useActivity';
+import type { ActivityEntry } from '../services/activityStore';
 
-const allActivities: Activity[] = [
-  { id: 'tx-001', type: 'Stake', amount: '1.25 BTC', status: 'Completed', timestamp: '2h ago' },
-  { id: 'tx-002', type: 'Bridge', amount: '0.85 BTC', status: 'Pending', timestamp: '15m ago' },
-  { id: 'tx-003', type: 'Borrow', amount: '25,000 fUSD', status: 'Completed', timestamp: '1d ago' },
-  { id: 'tx-004', type: 'Mint', amount: '5,000 fUSD', status: 'Completed', timestamp: '3d ago' },
-  { id: 'tx-005', type: 'Repay', amount: '10,000 fUSD', status: 'Completed', timestamp: '5d ago' },
-  { id: 'tx-006', type: 'Stake', amount: '10.00 BTC', status: 'Completed', timestamp: '1w ago' },
-  { id: 'tx-007', type: 'Bridge', amount: '2.50 BTC', status: 'Completed', timestamp: '2w ago' },
-  { id: 'tx-008', type: 'Mint', amount: '1,000 fUSD', status: 'Failed', timestamp: '1m ago' },
-];
+/** Convert ISO timestamp to relative string: "2h ago", "3d ago", etc. */
+function timeAgo(isoString: string): string {
+  const diff = Date.now() - new Date(isoString).getTime();
+  const minutes = Math.floor(diff / 60_000);
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  const weeks = Math.floor(days / 7);
+  return `${weeks}w ago`;
+}
+
+function shortHash(hash: string): string {
+  if (!hash || hash.length < 12) return hash;
+  return `${hash.slice(0, 8)}…${hash.slice(-6)}`;
+}
 
 interface ActivityHistoryProps {
   isPrivacyMode: boolean;
@@ -20,16 +29,29 @@ interface ActivityHistoryProps {
 }
 
 const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack }) => {
-  const [selectedTx, setSelectedTx] = useState<Activity | null>(null);
-  const formatValue = (val: string) => isPrivacyMode ? "******" : val;
+  const allActivities = useActivity();
+  const [selectedTx, setSelectedTx] = useState<ActivityEntry | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const formatValue = (val: string) => isPrivacyMode ? '••••••' : val;
+
+  const filtered = searchQuery.trim()
+    ? allActivities.filter(
+        (a) =>
+          a.txHash.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          a.type.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : allActivities;
 
   const getActivityIcon = (type: string, size = 16) => {
     switch (type) {
-      case 'Stake': return <Zap size={size} />;
-      case 'Bridge': return <Repeat size={size} />;
-      case 'Borrow': return <ArrowUpRight size={size} />;
-      case 'Repay': return <ArrowLeft size={size} />;
-      default: return <CheckCircle2 size={size} />;
+      case 'Stake':        return <Zap size={size} />;
+      case 'Unstake':      return <ArrowDownLeft size={size} />;
+      case 'ClaimRewards': return <Gift size={size} />;
+      case 'Swap':         return <Repeat size={size} />;
+      case 'Supply':       return <ArrowUpRight size={size} />;
+      case 'Withdraw':     return <ArrowLeft size={size} />;
+      default:             return <CheckCircle2 size={size} />;
     }
   };
 
@@ -60,8 +82,10 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
         <div className="flex-1 border-2 border-black dark:border-white bg-white dark:bg-black flex items-center px-4 h-12">
             <Search size={16} className="text-black/20 dark:text-white/50" />
             <input 
-                type="text" 
-                placeholder="SEARCH TX HASH..." 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="SEARCH TX HASH OR TYPE..." 
                 className="bg-transparent outline-none w-full ml-3 text-[10px] font-black uppercase tracking-widest placeholder:text-black/10 dark:placeholder:text-white/30 dark:text-white"
             />
         </div>
@@ -77,7 +101,15 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
         </div>
         
         <div className="border-2 border-black dark:border-white divide-y-2 divide-black dark:divide-white bg-white dark:bg-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
-          {allActivities.map((activity) => (
+          {filtered.length === 0 && (
+            <div className="p-12 text-center">
+              <CheckCircle2 size={32} className="mx-auto mb-4 opacity-10 dark:text-white" />
+              <p className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:text-white">
+                {allActivities.length === 0 ? 'No transactions yet' : 'No results match your search'}
+              </p>
+            </div>
+          )}
+          {filtered.map((activity) => (
             <div 
               key={activity.id} 
               onClick={() => setSelectedTx(activity)}
@@ -93,14 +125,14 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <p className="text-sm font-black uppercase tracking-tight dark:text-white">{activity.type}</p>
-                    <span className="text-[8px] px-1.5 py-0.5 border border-black/10 dark:border-white/30 font-mono opacity-40 dark:opacity-70 dark:text-white">{activity.id}</span>
+                    <span className="text-[8px] px-1.5 py-0.5 border border-black/10 dark:border-white/30 font-mono opacity-40 dark:opacity-70 dark:text-white">{shortHash(activity.txHash)}</span>
                   </div>
-                  <p className="text-[10px] font-bold text-black/30 dark:text-white/60 uppercase tracking-widest">{activity.timestamp}</p>
+                  <p className="text-[10px] font-bold text-black/30 dark:text-white/60 uppercase tracking-widest">{timeAgo(activity.timestamp)}</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm font-black tracking-tight dark:text-white">
-                  {formatValue(activity.amount)}
+                  {formatValue(activity.label)}
                 </p>
                 <div className="flex items-center justify-end gap-1.5 mt-1">
                   {activity.status === 'Pending' ? (
@@ -163,21 +195,17 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
               <div className="space-y-4 border-y-2 border-black/10 dark:border-white/30 py-6">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:opacity-70 dark:text-white">Amount</span>
-                  <span className="text-sm font-black dark:text-white">{formatValue(selectedTx.amount)}</span>
+                  <span className="text-sm font-black dark:text-white">{formatValue(selectedTx.label)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:opacity-70 dark:text-white">Timestamp</span>
-                  <span className="text-sm font-bold dark:text-white">{selectedTx.timestamp}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:opacity-70 dark:text-white">Protocol Fee</span>
-                  <span className="text-sm font-bold dark:text-white">0.0001 BTC</span>
+                  <span className="text-sm font-bold dark:text-white">{timeAgo(selectedTx.timestamp)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:opacity-70 dark:text-white">Network</span>
                   <div className="flex items-center gap-1.5">
                     <Shield size={12} className="text-[#F7931A]" />
-                    <span className="text-[10px] font-black uppercase dark:text-white">Starknet L2</span>
+                    <span className="text-[10px] font-black uppercase dark:text-white">Starknet Mainnet</span>
                   </div>
                 </div>
               </div>
@@ -186,10 +214,22 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
               <div className="space-y-2">
                  <p className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:opacity-70 dark:text-white">Transaction Hash</p>
                  <div className="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-900 border-2 border-black dark:border-white font-mono text-[10px] font-bold dark:text-white">
-                   <span className="truncate mr-4">0x4a92...e91b</span>
+                   <span className="truncate mr-4">{shortHash(selectedTx.txHash)}</span>
                    <div className="flex gap-2">
-                     <Copy size={12} className="cursor-pointer hover:text-[#F7931A]" />
-                     <ExternalLink size={12} className="cursor-pointer hover:text-[#F7931A]" />
+                     <button
+                       onClick={() => navigator.clipboard.writeText(selectedTx.txHash)}
+                       title="Copy hash"
+                     >
+                       <Copy size={12} className="cursor-pointer hover:text-[#F7931A]" />
+                     </button>
+                     <a
+                       href={`${selectedTx.explorerBase}/tx/${selectedTx.txHash}`}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       title="View on Starkscan"
+                     >
+                       <ExternalLink size={12} className="cursor-pointer hover:text-[#F7931A]" />
+                     </a>
                    </div>
                  </div>
               </div>

@@ -8,6 +8,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { WalletId } from '../config/wallets';
 import { executeTransaction } from '../config/wallets';
+import { logActivity } from '../services/activityStore';
+import { ACTIVE_NETWORK_CONFIG } from '../config/networks';
 import {
   fetchLendingAssets,
   fetchUserPositions,
@@ -79,9 +81,9 @@ export function useLending(address: string | null, walletId: WalletId | null): L
   }, [refresh]);
 
   const deposit = useCallback(async (asset: VesuAsset, amount: string) => {
-    if (!address || !walletId) throw new Error('Wallet no conectada');
+    if (!address || !walletId) throw new Error('Wallet not connected');
     const amountWei = toWei(amount, asset.decimals);
-    if (amountWei === 0n) throw new Error('Monto inválido');
+    if (amountWei === 0n) throw new Error('Invalid amount');
 
     setTxStatus('pending');
     setTxError(null);
@@ -92,19 +94,20 @@ export function useLending(address: string | null, walletId: WalletId | null): L
       const txHash = await executeTransaction(walletId, calls);
       setLastTxHash(txHash);
       setTxStatus('success');
+      logActivity({ type: 'Supply', label: `${amount} ${asset.symbol}`, txHash, status: 'Completed', explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl });
       // Refresh positions after a short delay to let the chain settle
       setTimeout(() => void refresh(), 4000);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = err instanceof Error ? err.message : 'Unknown error';
       setTxError(msg);
       setTxStatus('error');
     }
   }, [address, walletId, refresh]);
 
   const withdraw = useCallback(async (asset: VesuAsset, position: UserPosition) => {
-    if (!address || !walletId) throw new Error('Wallet no conectada');
+    if (!address || !walletId) throw new Error('Wallet not connected');
     const shares = BigInt(position.vTokenBalance);
-    if (shares === 0n) throw new Error('Sin posición para retirar');
+    if (shares === 0n) throw new Error('No position to withdraw');
 
     setTxStatus('pending');
     setTxError(null);
@@ -115,9 +118,10 @@ export function useLending(address: string | null, walletId: WalletId | null): L
       const txHash = await executeTransaction(walletId, calls);
       setLastTxHash(txHash);
       setTxStatus('success');
+      logActivity({ type: 'Withdraw', label: `${asset.symbol} position`, txHash, status: 'Completed', explorerBase: ACTIVE_NETWORK_CONFIG.explorerUrl });
       setTimeout(() => void refresh(), 4000);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = err instanceof Error ? err.message : 'Unknown error';
       setTxError(msg);
       setTxStatus('error');
     }

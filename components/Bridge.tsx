@@ -144,7 +144,7 @@ const Bridge: React.FC = () => {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 dark:opacity-70 dark:text-white">
-                Vender
+                Sell
               </p>
               {address && (
                 <button
@@ -187,7 +187,7 @@ const Bridge: React.FC = () => {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 dark:opacity-70 dark:text-white">
-                Recibir (estimado)
+                Receive (estimated)
               </p>
               {isGasless && <RouteBadge label="Gasless" />}
             </div>
@@ -218,13 +218,13 @@ const Bridge: React.FC = () => {
             ? 'bg-red-700 text-white'
             : 'bg-black dark:bg-white text-white dark:text-black'
         }`}>
-          {isPending && <><Loader2 size={16} className="animate-spin shrink-0" /><span className="text-[10px] font-black uppercase tracking-widest">Ejecutando swap en Starknet…</span></>}
+          {isPending && <><Loader2 size={16} className="animate-spin shrink-0" /><span className="text-[10px] font-black uppercase tracking-widest">Executing swap on Starknet…</span></>}
           {isSuccess && explorerLink && (
             <>
               <CheckCircle2 size={16} className="shrink-0" />
-              <span className="text-[10px] font-black uppercase tracking-widest flex-1">¡Swap completado!</span>
+              <span className="text-[10px] font-black uppercase tracking-widest flex-1">Swap completed!</span>
               <a href={explorerLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-black underline">
-                Ver <ExternalLink size={11} />
+                View <ExternalLink size={11} />
               </a>
             </>
           )}
@@ -238,7 +238,7 @@ const Bridge: React.FC = () => {
             <>
               <Zap size={16} className="text-[#F7931A]" />
               <span className="text-[10px] font-black uppercase tracking-widest">
-                {isQuoting ? 'Buscando mejor ruta…' : isReady && routeName ? `Ruta: ${routeName}` : 'Powered by AVNU'}
+                {isQuoting ? 'Finding best route…' : isReady && routeName ? `Route: ${routeName}` : 'Powered by AVNU'}
               </span>
             </>
           )}
@@ -249,7 +249,7 @@ const Bridge: React.FC = () => {
       {isReady && swap.quote && (
         <div className="bg-zinc-50 dark:bg-zinc-900 border border-black/10 dark:border-white/20 p-4 space-y-2 font-mono">
           <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-            <span className="opacity-40 dark:opacity-70">TIPO DE CAMBIO:</span>
+            <span className="opacity-40 dark:opacity-70">EXCHANGE RATE:</span>
             <span>
               1 {swap.sellToken.symbol} ≈{' '}
               {(parseFloat(swap.buyAmount) / parseFloat(swap.sellAmount)).toFixed(4)}{' '}
@@ -257,12 +257,12 @@ const Bridge: React.FC = () => {
             </span>
           </div>
           <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-            <span className="opacity-40 dark:opacity-70">RUTA:</span>
+            <span className="opacity-40 dark:opacity-70">ROUTE:</span>
             <span>{routeName || 'AVNU'}</span>
           </div>
           {swap.priceImpact && (
             <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-              <span className="opacity-40 dark:opacity-70">IMPACTO PRECIO:</span>
+              <span className="opacity-40 dark:opacity-70">PRICE IMPACT:</span>
               <span className={parseFloat(swap.priceImpact) > 1 ? 'text-red-500' : 'text-green-600'}>
                 ~{swap.priceImpact}
               </span>
@@ -282,15 +282,15 @@ const Bridge: React.FC = () => {
         className="w-full h-16 bg-black dark:bg-white text-white dark:text-black text-base font-bold tracking-[0.2em] flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed uppercase transition-opacity"
       >
         {isPending ? (
-          <><Loader2 size={20} className="animate-spin" /> Ejecutando…</>
+          <><Loader2 size={20} className="animate-spin" /> Processing…</>
         ) : isSuccess ? (
-          <><CheckCircle2 size={20} /> Nuevo Swap</>
+          <><CheckCircle2 size={20} /> New Swap</>
         ) : isError ? (
-          <><RefreshCw size={20} /> Reintentar</>
+          <><RefreshCw size={20} /> Retry</>
         ) : isQuoting ? (
-          <><Loader2 size={20} className="animate-spin" /> Cotizando…</>
+          <><Loader2 size={20} className="animate-spin" /> Quoting…</>
         ) : !address ? (
-          'Conecta tu billetera'
+          'Connect your wallet'
         ) : (
           <><Zap size={20} /> Execute Swap</>
         )}
@@ -302,7 +302,7 @@ const Bridge: React.FC = () => {
         <div>
           <p className="text-xs font-black uppercase tracking-widest mb-1 dark:text-white">DEX Aggregator</p>
           <p className="text-[11px] text-black/60 dark:text-white/80 leading-relaxed font-medium">
-            Los swaps son ejecutados por <strong>AVNU</strong>, el agregador de liquidez líder en Starknet. Siempre se selecciona la mejor ruta disponible entre múltiples DEX.
+            Swaps are executed by <strong>AVNU</strong>, Starknet’s leading liquidity aggregator. The best available route is always selected across multiple DEXs.
           </p>
         </div>
       </div>
