@@ -1,69 +1,201 @@
-import React from 'react';
-import { Shield, Fingerprint, Key } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { AlertCircle, ExternalLink, Loader2, Shield, Wallet } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { detectAvailableWallets, WALLET_METADATA, type WalletId, type WalletInfo } from '../config/wallets';
+import { ACTIVE_NETWORK, ACTIVE_NETWORK_CONFIG } from '../config/networks';
 
-interface AuthScreenProps {
-  onAuth: () => void;
+// Argent X and Braavos SVG icons (inline to avoid external icon deps)
+const ArgentIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+    <rect width="48" height="48" rx="12" fill="#FF875B" />
+    <path d="M24 8L35.2 38H28.4L24 25.2L19.6 38H12.8L24 8Z" fill="white" />
+  </svg>
+);
+
+const BraavosIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+    <rect width="48" height="48" rx="12" fill="#F5C842" />
+    <circle cx="24" cy="24" r="10" fill="#222" />
+    <circle cx="24" cy="24" r="5" fill="#F5C842" />
+  </svg>
+);
+
+const WalletIcon = () => (
+  <Wallet size={24} className="text-black" />
+);
+
+function WalletButton({
+  wallet,
+  onClick,
+  isLoading,
+}: {
+  wallet: WalletInfo;
+  onClick: () => void;
+  isLoading: boolean;
+}) {
+  const icon =
+    wallet.id === 'argentX' ? <ArgentIcon /> :
+    wallet.id === 'braavos' ? <BraavosIcon /> :
+    <WalletIcon />;
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={isLoading}
+      className="w-full h-16 bg-black text-white flex items-center justify-between px-6 disabled:opacity-50 disabled:cursor-not-allowed neo-shadow-orange transition-opacity"
+    >
+      <div className="flex items-center gap-3">
+        {icon}
+        <span className="text-base font-bold tracking-tighter uppercase">
+          {wallet.name}
+        </span>
+      </div>
+      {isLoading ? (
+        <Loader2 size={20} className="animate-spin text-[#F7931A]" />
+      ) : (
+        <span className="text-[10px] font-black tracking-widest text-[#F7931A] uppercase">Connect →</span>
+      )}
+    </button>
+  );
 }
 
-const AuthScreen: React.FC<AuthScreenProps> = ({ onAuth }) => {
+function InstallLink({ wallet }: { wallet: WalletInfo }) {
+  return (
+    <a
+      href={wallet.installUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-full h-14 border-2 border-black/20 flex items-center justify-between px-6 font-bold tracking-tighter text-black/40 hover:border-black hover:text-black transition-colors"
+    >
+      <span className="text-sm uppercase">{wallet.name} — Install</span>
+      <ExternalLink size={16} />
+    </a>
+  );
+}
+
+const AuthScreen: React.FC = () => {
+  const { connect, isLoading, error } = useAuth();
+  const [detected, setDetected] = useState<WalletInfo[]>([]);
+  const [connecting, setConnecting] = useState<WalletId | null>(null);
+
+  // Detect wallets after a short delay so extensions can inject
+  useEffect(() => {
+    const t = setTimeout(() => setDetected(detectAvailableWallets()), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleConnect = async (walletId: WalletId) => {
+    setConnecting(walletId);
+    try {
+      await connect(walletId);
+    } finally {
+      setConnecting(null);
+    }
+  };
+
+  const detectedIds = new Set(detected.map((w) => w.id));
+
+  // Wallets to offer for install (not detected)
+  const notInstalled = (Object.values(WALLET_METADATA) as WalletInfo[]).filter(
+    (w) => w.id !== 'any' && !detectedIds.has(w.id),
+  );
+
   return (
     <div className="min-h-screen bg-white flex flex-col px-10 pt-24 pb-12 max-w-md mx-auto overflow-hidden relative">
-      {/* Background Decor - Smaller BTC logo at 35% opacity, top-right corner */}
+      {/* Background BTC watermark */}
       <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
-        <img 
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png" 
-          alt="Bitcoin Logo" 
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png"
+          alt=""
           className="w-[220px] h-[220px]"
         />
       </div>
-      
+
+      {/* Branding */}
       <div className="mb-20 animate-modern relative z-10">
         <div className="flex items-center gap-2 mb-6">
-          <img 
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png" 
-            alt="BTC" 
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png"
+            alt="BTC"
             className="w-10 h-10"
           />
-          <div className="h-6 w-[2px] bg-black/10 mx-2"></div>
+          <div className="h-6 w-[2px] bg-black/10 mx-2" />
+          {ACTIVE_NETWORK_CONFIG.isTestnet && (
+            <span className="text-[9px] font-black uppercase tracking-widest bg-amber-400 text-black px-2 py-0.5">
+              TESTNET
+            </span>
+          )}
         </div>
-        
+
         <h1 className="text-[88px] leading-[0.75] font-bold tracking-tight mb-8">
-          BTC<br/><span className="font-medium opacity-80">Fixed</span>
+          BTC<br />
+          <span className="font-medium opacity-80">Fixed</span>
         </h1>
-        
-        <div className="h-2 w-20 bg-[#F7931A] mb-8"></div>
-        
+
+        <div className="h-2 w-20 bg-[#F7931A] mb-8" />
+
         <p className="text-black/60 font-medium text-xl leading-tight max-w-[280px]">
-          Smart HODLing. <br/>Borrow, don't sell your cheap coins.
+          Smart HODLing.<br />Borrow, don't sell your cheap coins.
         </p>
       </div>
 
-      <div className="mt-auto space-y-4 animate-modern" style={{ animationDelay: '0.1s' }}>
-        <button 
-          onClick={onAuth}
-          className="w-full h-16 bg-black text-white flex items-center justify-between px-6 group neo-shadow-orange"
-        >
-          <span className="text-lg font-bold tracking-tighter uppercase">ACCESS TERMINAL</span>
-          <Fingerprint size={24} className="group-hover:scale-110 transition-transform text-[#F7931A]" />
-        </button>
-        
-        <button 
-          onClick={onAuth}
-          className="w-full h-16 border-2 border-black flex items-center justify-between px-6 font-bold tracking-tighter hover:bg-zinc-50 transition-colors bg-white/80 backdrop-blur-sm"
-        >
-          <span className="uppercase">CONNECT WALLET</span>
-          <Key size={20} />
-        </button>
+      {/* Wallet connection section */}
+      <div className="mt-auto space-y-3 animate-modern" style={{ animationDelay: '0.1s' }}>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/30 mb-4">
+          Connect your Starknet wallet
+        </p>
 
-        <div className="pt-12 flex flex-col gap-6">
-          <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border-l-4 border-[#F7931A] backdrop-blur-sm">
+        {/* Detected wallets */}
+        {detected.map((wallet) => (
+          <WalletButton
+            key={wallet.id}
+            wallet={wallet}
+            onClick={() => handleConnect(wallet.id)}
+            isLoading={connecting === wallet.id && isLoading}
+          />
+        ))}
+
+        {/* Not installed wallets – show install links */}
+        {notInstalled.map((wallet) => (
+          <InstallLink key={wallet.id} wallet={wallet} />
+        ))}
+
+        {/* No wallets at all */}
+        {detected.length === 0 && (
+          <p className="text-xs text-black/40 font-medium text-center pt-2">
+            No Starknet wallet detected. Install Argent X or Braavos.
+          </p>
+        )}
+
+        {/* Error message */}
+        {error && (
+          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 text-red-700 mt-2">
+            <AlertCircle size={14} className="mt-0.5 shrink-0" />
+            <p className="text-[11px] font-medium leading-relaxed">{error}</p>
+          </div>
+        )}
+
+        {/* Coming soon */}
+        <div className="pt-4">
+          <button
+            disabled
+            className="w-full h-12 border-2 border-dashed border-black/15 text-black/25 font-bold text-xs tracking-widest uppercase cursor-not-allowed"
+          >
+            Email / Social Login — Próximamente
+          </button>
+        </div>
+
+        {/* Footer info */}
+        <div className="pt-8 flex flex-col gap-4">
+          <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border-l-4 border-[#F7931A]">
             <Shield size={16} className="mt-1 shrink-0 text-[#F7931A]" />
             <p className="text-[11px] text-black font-bold leading-relaxed">
-              Experience the Bitcoin Standard in DeFi. No liquidations on fixed-rate vaults. Total transparency with on-chain SPV proofs powered by Starknet.
+              Bitcoin DeFi en Starknet. Sin liquidaciones en vaults de tasa fija.
+              Total transparencia con pruebas on-chain.
             </p>
           </div>
           <p className="text-[10px] text-black/40 font-black uppercase tracking-[0.2em] text-center">
-            Secured by Bitcoin Proof-of-Work
+            Powered by Starknet · {ACTIVE_NETWORK.toUpperCase()}
           </p>
         </div>
       </div>

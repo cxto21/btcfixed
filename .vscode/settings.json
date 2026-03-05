@@ -1,0 +1,18 @@
+{
+  // ── Copilot Agent: Auto-approve TOTAL ──────────────────────────────────────
+  "chat.tools.terminal.autoApprove": true,
+  "chat.tools.autoApprove": true,
+  "chat.agent.runTasks": true,
+  "github.copilot.chat.agent.autoRunCommands": "always",
+  "github.copilot.chat.edits.autoApprove": true,
+
+  // ── Editor ───────────────────────────────────────────────────────────────
+  "editor.formatOnSave": false,
+  "editor.tabSize": 2,
+  "typescript.preferences.importModuleSpecifier": "relative",
+
+  // ── TypeScript ───────────────────────────────────────────────────────────
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "chat.tools.terminal.ignoreDefaultAutoApproveRules": true
+}

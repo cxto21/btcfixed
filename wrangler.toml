@@ -1,0 +1,14 @@
+# Cloudflare Pages – BTCFixed
+# Docs: https://developers.cloudflare.com/pages/
+
+name = "btcfixed"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-01-01"
+
+# Build settings are handled in Cloudflare Pages dashboard:
+#   Build command: npm run build
+#   Output dir:    dist
+#   Node version:  20
+
+# For Workers (Session 9 – Paymaster proxy), a Workers project
+# will be created separately.
