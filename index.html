@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BTCFixed | Institutional BTC</title>
+  <title>BTCFixed | Institutional BTCFi</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,21 +14,69 @@
       --foreground: #000000;
       --muted: #F8F8F8;
       --border: #000000;
+      --btc-orange: #F7931A;
     }
     body {
       font-family: 'Space Grotesk', sans-serif;
-      background-color: var(--bg);
+      background-color: #f2f2f2;
       color: var(--foreground);
       -webkit-tap-highlight-color: transparent;
       letter-spacing: -0.03em;
+      transition: background-color 0.3s ease;
+    }
+    body.dark {
+      background-color: #0a0a0a;
+    }
+    #root {
+      position: relative;
+      background: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease;
+    }
+    .dark #root {
+      background: #000000;
+    }
+    /* Global Background Logo Watermark */
+    .btc-watermark {
+      position: fixed;
+      top: -30px;
+      right: -30px;
+      width: 220px;
+      height: 220px;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      transition: opacity 0.3s ease;
+    }
+    .dark .btc-watermark {
+      opacity: 0.15;
     }
     .mono-card {
       background: #FFFFFF;
       border: 1.5px solid #000000;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .dark .mono-card {
+      background: #111111;
+      border-color: #FFFFFF;
+    }
     .mono-card:active {
       transform: scale(0.98);
+    }
+    .btn-orange {
+      background: var(--btc-orange);
+      color: #FFFFFF;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .btn-orange:active {
+      background: #e68210;
+      transform: translateY(1px);
     }
     .btn-black {
       background: #000000;
@@ -38,9 +85,16 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
+    .dark .btn-black {
+      background: #FFFFFF;
+      color: #000000;
+    }
     .btn-black:active {
       background: #222222;
       transform: translateY(1px);
+    }
+    .dark .btn-black:active {
+      background: #eeeeee;
     }
     .btn-outline {
       border: 2px solid #000000;
@@ -48,6 +102,10 @@
       color: #000000;
       text-transform: uppercase;
       letter-spacing: 0.1em;
+    }
+    .dark .btn-outline {
+      border-color: #FFFFFF;
+      color: #FFFFFF;
     }
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(10px); }
@@ -61,6 +119,20 @@
     .fixed-border {
       border-bottom: 4px solid #000000;
     }
+    .dark .fixed-border {
+      border-bottom-color: #FFFFFF;
+    }
+    
+    /* Neobrutalism shadow */
+    .neo-shadow {
+      box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    }
+    .dark .neo-shadow {
+      box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.2);
+    }
+    .neo-shadow-orange {
+      box-shadow: 4px 4px 0px 0px var(--btc-orange);
+    }
   </style>
   <script type="importmap">
   {
@@ -73,8 +145,25 @@
     }
   }
   </script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            orange: {
+              DEFAULT: '#F7931A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body class="antialiased">
+  <div class="btc-watermark"></div>
   <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>

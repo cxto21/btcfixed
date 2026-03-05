@@ -57,73 +57,83 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   };
 
   const activeFeature = FEATURES[current];
-  const Icon = activeFeature.icon;
 
   return (
-    <div className="fixed inset-0 bg-white z-[100] flex flex-col overflow-hidden selection:bg-black selection:text-white">
-      {/* Background Decor */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 border-[40px] border-black rounded-full" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[1px] bg-black rotate-12" />
-      </div>
-
-      <div className="relative z-10 flex justify-between items-center p-8 pt-12">
-        <div className="flex items-center gap-3">
-          <div className="w-5 h-5 bg-black flex items-center justify-center">
-            <div className="w-1.5 h-1.5 bg-white" />
-          </div>
-          <span className="text-[11px] font-black uppercase tracking-[0.4em] text-black">BTCFIXED</span>
+    <div className="fixed inset-0 bg-[#f2f2f2] z-[100] flex justify-center overflow-hidden selection:bg-black selection:text-white">
+      {/* Mobile-constrained container */}
+      <div className="w-full max-w-md bg-white relative flex flex-col shadow-2xl">
+        
+        {/* Background Decor - Official Logo as watermark, top-right, smaller, 35% opacity */}
+        <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png" 
+            alt="BTC" 
+            className="w-[220px] h-[220px]"
+          />
         </div>
-        <button 
-          onClick={onFinish}
-          className="text-[10px] font-bold uppercase tracking-widest text-black/40"
-        >
-          Skip
-        </button>
-      </div>
 
-      <div className={`flex-1 flex flex-col justify-center px-8 transition-all duration-300 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-        <div className="space-y-8">
+        <div className="relative z-10 flex justify-between items-center p-8 pt-12">
           <div className="flex items-center gap-4">
-            <div className="h-[1px] w-12 bg-black/20" />
-            <span className="text-[10px] font-black tracking-[0.3em] uppercase text-black/40">
-              {activeFeature.label}
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png" 
+              alt="BTC" 
+              className="w-10 h-10"
+            />
+            <span className="text-2xl font-black tracking-tight text-black">
+              BTC<span className="font-medium">Fixed</span>
             </span>
           </div>
+          <button 
+            onClick={onFinish}
+            className="text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-black transition-colors"
+          >
+            Skip
+          </button>
+        </div>
 
-          <div className="relative">
-            <h2 className="text-[64px] font-bold leading-[0.8] tracking-tighter text-black whitespace-pre-line mb-8">
-              {activeFeature.title}
-            </h2>
+        <div className={`flex-1 flex flex-col justify-center px-8 transition-all duration-300 relative z-10 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+          <div className="space-y-8">
+            <div className="flex items-center gap-4">
+              <div className="h-[2px] w-12 bg-[#F7931A]" />
+              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-black/40">
+                {activeFeature.label}
+              </span>
+            </div>
+
+            <div className="relative">
+              <h2 className="text-[52px] font-bold leading-[0.9] tracking-tighter text-black whitespace-pre-line mb-8 drop-shadow-sm">
+                {activeFeature.title}
+              </h2>
+            </div>
+
+            <p className="text-xl font-medium text-black leading-[1.2] max-w-[300px]">
+              {activeFeature.desc}
+            </p>
+          </div>
+        </div>
+
+        <div className="p-8 pb-12 space-y-10 relative z-10">
+          <div className="flex items-end gap-1.5 h-8">
+            {FEATURES.map((_, i) => (
+              <div 
+                key={i} 
+                className={`transition-all duration-700 ${i === current ? 'w-12 bg-[#F7931A] h-2' : 'w-2 bg-black/10 h-2'}`}
+              />
+            ))}
           </div>
 
-          <p className="text-xl font-medium text-black leading-[1.2] max-w-[300px]">
-            {activeFeature.desc}
-          </p>
-        </div>
-      </div>
-
-      <div className="p-8 pb-12 space-y-10 relative z-10">
-        <div className="flex items-end gap-1.5 h-8">
-          {FEATURES.map((_, i) => (
-            <div 
-              key={i} 
-              className={`transition-all duration-700 ${i === current ? 'w-12 bg-black h-1.5' : 'w-2 bg-black/10 h-1.5'}`}
-            />
-          ))}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={handleNext}
-            className="flex-1 h-20 bg-black text-white flex items-center justify-between px-8 text-lg font-bold tracking-tighter"
-          >
-            <span>{current === FEATURES.length - 1 ? 'GET STARTED' : 'CONTINUE'}</span>
-            <ChevronRight size={24} />
-          </button>
-          
-          <div className="w-20 h-20 border-2 border-black flex items-center justify-center opacity-20">
-            <span className="text-sm font-black italic">0{current + 1}</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={handleNext}
+              className="flex-1 h-20 bg-black text-white flex items-center justify-between px-8 text-lg font-bold tracking-tighter group transition-all neo-shadow-orange"
+            >
+              <span>{current === FEATURES.length - 1 ? 'GET STARTED' : 'CONTINUE'}</span>
+              <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+            
+            <div className="w-20 h-20 border-2 border-black flex items-center justify-center bg-white/50 backdrop-blur-sm">
+              <span className="text-sm font-black italic">0{current + 1}</span>
+            </div>
           </div>
         </div>
       </div>

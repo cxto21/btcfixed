@@ -1,5 +1,5 @@
 
-export type TabType = 'dashboard' | 'bridge' | 'staking' | 'lending' | 'verify';
+export type TabType = 'dashboard' | 'bridge' | 'staking' | 'lending' | 'verify' | 'activity';
 
 export interface TokenData {
   symbol: string;
