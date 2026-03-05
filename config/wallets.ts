@@ -1,6 +1,8 @@
 // BTCFixed – Wallet definitions for browser-injected Starknet wallets
+import ControllerConnector from '@cartridge/controller';
+import { NETWORKS } from './networks';
 
-export type WalletId = 'argentX' | 'braavos' | 'any';
+export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'any';
 
 export interface WalletInfo {
   id: WalletId;
@@ -30,6 +32,12 @@ declare global {
 }
 
 export const WALLET_METADATA: Record<WalletId, WalletInfo> = {
+  cartridge: {
+    id: 'cartridge',
+    name: 'Cartridge',
+    icon: 'https://cartridge.gg/icon.png',
+    installUrl: 'https://cartridge.gg/',
+  },
   argentX: {
     id: 'argentX',
     name: 'Argent X',
@@ -50,6 +58,27 @@ export const WALLET_METADATA: Record<WalletId, WalletInfo> = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// Cartridge Controller singleton
+// ---------------------------------------------------------------------------
+
+let _cartridgeConnector: InstanceType<typeof ControllerConnector> | null = null;
+
+export function getCartridgeConnector(): InstanceType<typeof ControllerConnector> {
+  if (!_cartridgeConnector) {
+    // Use mainnet RPC via Cartridge's own endpoint for best reliability
+    const mainnetRpc = NETWORKS.mainnet.rpcUrl;
+    _cartridgeConnector = new ControllerConnector({
+      chains: [{ rpcUrl: mainnetRpc }],
+      // No policies for Session 1 – user always signs manually
+      // Sessions 2+ will add staking/swap policy entries
+      policies: [],
+    });
+  }
+  return _cartridgeConnector;
+}
+
+/** Detects browser-injected wallets (Argent X, Braavos). Cartridge is always available. */
 export function detectAvailableWallets(): WalletInfo[] {
   const found: WalletInfo[] = [];
   if (typeof window === 'undefined') return found;
@@ -59,10 +88,12 @@ export function detectAvailableWallets(): WalletInfo[] {
   return found;
 }
 
+/** Returns the injected wallet object for a given wallet ID (not Cartridge). */
 export function getWalletObject(id: WalletId): StarknetBrowserWallet | null {
   if (typeof window === 'undefined') return null;
   if (id === 'argentX') return window.starknet_argentX ?? null;
   if (id === 'braavos') return window.starknet_braavos ?? null;
+  if (id === 'cartridge') return null; // handled separately via getCartridgeConnector()
   return window.starknet ?? null;
 }
 

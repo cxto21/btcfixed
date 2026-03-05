@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, ExternalLink, Loader2, Shield, Wallet } from 'lucide-react';
+import { AlertCircle, ExternalLink, Loader2, Shield, Wallet, Zap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { detectAvailableWallets, WALLET_METADATA, type WalletId, type WalletInfo } from '../config/wallets';
 import { ACTIVE_NETWORK, ACTIVE_NETWORK_CONFIG } from '../config/networks';
@@ -20,6 +20,14 @@ const BraavosIcon = () => (
   </svg>
 );
 
+// Cartridge Controller icon — the "C" logo style
+const CartridgeIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
+    <rect width="48" height="48" rx="12" fill="#FBCB4A" />
+    <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" fontSize="28" fontWeight="bold" fill="#1a1a1a">C</text>
+  </svg>
+);
+
 const WalletIcon = () => (
   <Wallet size={24} className="text-black" />
 );
@@ -28,12 +36,15 @@ function WalletButton({
   wallet,
   onClick,
   isLoading,
+  accent = false,
 }: {
   wallet: WalletInfo;
   onClick: () => void;
   isLoading: boolean;
+  accent?: boolean;
 }) {
   const icon =
+    wallet.id === 'cartridge' ? <CartridgeIcon /> :
     wallet.id === 'argentX' ? <ArgentIcon /> :
     wallet.id === 'braavos' ? <BraavosIcon /> :
     <WalletIcon />;
@@ -42,18 +53,31 @@ function WalletButton({
     <button
       onClick={onClick}
       disabled={isLoading}
-      className="w-full h-16 bg-black text-white flex items-center justify-between px-6 disabled:opacity-50 disabled:cursor-not-allowed neo-shadow-orange transition-opacity"
+      className={`w-full h-16 flex items-center justify-between px-6 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity ${
+        accent
+          ? 'bg-[#FBCB4A] text-black border-2 border-black neo-shadow-orange'
+          : 'bg-black text-white neo-shadow-orange'
+      }`}
     >
       <div className="flex items-center gap-3">
         {icon}
-        <span className="text-base font-bold tracking-tighter uppercase">
-          {wallet.name}
-        </span>
+        <div className="text-left">
+          <span className={`text-base font-bold tracking-tighter uppercase block ${accent ? 'text-black' : 'text-white'}`}>
+            {wallet.name}
+          </span>
+          {wallet.id === 'cartridge' && (
+            <span className="text-[9px] font-bold uppercase tracking-widest opacity-60">
+              Email · Google · Discord · Passkey
+            </span>
+          )}
+        </div>
       </div>
       {isLoading ? (
-        <Loader2 size={20} className="animate-spin text-[#F7931A]" />
+        <Loader2 size={20} className={`animate-spin ${accent ? 'text-black/60' : 'text-[#F7931A]'}`} />
       ) : (
-        <span className="text-[10px] font-black tracking-widest text-[#F7931A] uppercase">Connect →</span>
+        <span className={`text-[10px] font-black tracking-widest uppercase ${accent ? 'text-black/60' : 'text-[#F7931A]'}`}>
+          {wallet.id === 'cartridge' ? <Zap size={16} /> : 'Connect →'}
+        </span>
       )}
     </button>
   );
@@ -78,7 +102,7 @@ const AuthScreen: React.FC = () => {
   const [detected, setDetected] = useState<WalletInfo[]>([]);
   const [connecting, setConnecting] = useState<WalletId | null>(null);
 
-  // Detect wallets after a short delay so extensions can inject
+  // Detect injected wallets after a short delay so extensions can inject
   useEffect(() => {
     const t = setTimeout(() => setDetected(detectAvailableWallets()), 600);
     return () => clearTimeout(t);
@@ -95,10 +119,10 @@ const AuthScreen: React.FC = () => {
 
   const detectedIds = new Set(detected.map((w) => w.id));
 
-  // Wallets to offer for install (not detected)
-  const notInstalled = (Object.values(WALLET_METADATA) as WalletInfo[]).filter(
-    (w) => w.id !== 'any' && !detectedIds.has(w.id),
-  );
+  // Wallets to offer for install (not detected, excluding cartridge which is always available)
+  const notInstalled = (['argentX', 'braavos'] as WalletId[]).filter(
+    (id) => !detectedIds.has(id),
+  ).map((id) => WALLET_METADATA[id]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col px-10 pt-24 pb-12 max-w-md mx-auto overflow-hidden relative">
@@ -112,7 +136,7 @@ const AuthScreen: React.FC = () => {
       </div>
 
       {/* Branding */}
-      <div className="mb-20 animate-modern relative z-10">
+      <div className="mb-16 animate-modern relative z-10">
         <div className="flex items-center gap-2 mb-6">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png"
@@ -120,9 +144,13 @@ const AuthScreen: React.FC = () => {
             className="w-10 h-10"
           />
           <div className="h-6 w-[2px] bg-black/10 mx-2" />
-          {ACTIVE_NETWORK_CONFIG.isTestnet && (
+          {ACTIVE_NETWORK_CONFIG.isTestnet ? (
             <span className="text-[9px] font-black uppercase tracking-widest bg-amber-400 text-black px-2 py-0.5">
               TESTNET
+            </span>
+          ) : (
+            <span className="text-[9px] font-black uppercase tracking-widest bg-green-500 text-white px-2 py-0.5">
+              MAINNET
             </span>
           )}
         </div>
@@ -145,7 +173,24 @@ const AuthScreen: React.FC = () => {
           Connect your Starknet wallet
         </p>
 
-        {/* Detected wallets */}
+        {/* ── Cartridge Controller: always available, no extension needed ── */}
+        <WalletButton
+          wallet={WALLET_METADATA.cartridge}
+          onClick={() => handleConnect('cartridge')}
+          isLoading={connecting === 'cartridge' && isLoading}
+          accent
+        />
+
+        {/* Separator */}
+        {(detected.length > 0 || notInstalled.length > 0) && (
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-black/10" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-black/30">or extension wallet</span>
+            <div className="flex-1 h-px bg-black/10" />
+          </div>
+        )}
+
+        {/* Detected injected wallets */}
         {detected.map((wallet) => (
           <WalletButton
             key={wallet.id}
@@ -160,13 +205,6 @@ const AuthScreen: React.FC = () => {
           <InstallLink key={wallet.id} wallet={wallet} />
         ))}
 
-        {/* No wallets at all */}
-        {detected.length === 0 && (
-          <p className="text-xs text-black/40 font-medium text-center pt-2">
-            No Starknet wallet detected. Install Argent X or Braavos.
-          </p>
-        )}
-
         {/* Error message */}
         {error && (
           <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 text-red-700 mt-2">
@@ -174,16 +212,6 @@ const AuthScreen: React.FC = () => {
             <p className="text-[11px] font-medium leading-relaxed">{error}</p>
           </div>
         )}
-
-        {/* Coming soon */}
-        <div className="pt-4">
-          <button
-            disabled
-            className="w-full h-12 border-2 border-dashed border-black/15 text-black/25 font-bold text-xs tracking-widest uppercase cursor-not-allowed"
-          >
-            Email / Social Login — Próximamente
-          </button>
-        </div>
 
         {/* Footer info */}
         <div className="pt-8 flex flex-col gap-4">

@@ -10,10 +10,12 @@ import React, {
 import {
   detectAvailableWallets,
   getWalletObject,
+  getCartridgeConnector,
   type WalletId,
   type WalletInfo,
 } from '../config/wallets';
 import { ACTIVE_NETWORK } from '../config/networks';
+import { ResponseCodes } from '@cartridge/controller';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -57,7 +59,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const [availableWallets, setAvailableWallets] = useState<WalletInfo[]>([]);
-  // Keep ref to unregister wallet events on disconnect
   const cleanupRef = useRef<(() => void) | null>(null);
 
   // Detect injected wallets after extension has time to inject (≈500 ms)
@@ -66,8 +67,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, []);
 
-  // Internal connect – shared by user action and silent reconnect
+  // ---------------------------------------------------------------------------
+  // Cartridge connect path
+  // ---------------------------------------------------------------------------
+  const _connectCartridge = useCallback(async (silent = false) => {
+    if (!silent) setState((s) => ({ ...s, isLoading: true, error: null }));
+    try {
+      const connector = getCartridgeConnector();
+      const reply = await connector.connect();
+
+      if (reply.code !== ResponseCodes.SUCCESS) {
+        throw new Error((reply as { message?: string }).message ?? 'Cartridge: conexión cancelada');
+      }
+
+      const address = (reply as { address: string }).address;
+      if (!address) throw new Error('Cartridge: no se pudo obtener dirección');
+
+      setState({
+        isConnected: true,
+        address,
+        walletId: 'cartridge',
+        network: ACTIVE_NETWORK,
+        isLoading: false,
+        error: null,
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ address, walletId: 'cartridge' }));
+
+      // Cartridge handles account events internally — no listener needed
+      cleanupRef.current = () => {/* no-op */};
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Cartridge: conexión fallida';
+      if (!silent) setState((s) => ({ ...s, isLoading: false, error: message }));
+      throw err;
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---------------------------------------------------------------------------
+  // Injected wallet connect path (Argent X / Braavos)
+  // ---------------------------------------------------------------------------
   const _connect = useCallback(async (walletId: WalletId, silent = false) => {
+    if (walletId === 'cartridge') return _connectCartridge(silent);
+
     if (!silent) setState((s) => ({ ...s, isLoading: true, error: null }));
 
     try {
@@ -112,12 +152,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!silent) setState((s) => ({ ...s, isLoading: false, error: message }));
       throw err;
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [_connectCartridge]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ---------------------------------------------------------------------------
+  // Disconnect
+  // ---------------------------------------------------------------------------
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const _disconnect = useCallback(() => {
     cleanupRef.current?.();
     cleanupRef.current = null;
+    // If Cartridge, also call their disconnect
+    try { getCartridgeConnector().disconnect(); } catch { /* ignore */ }
     setState({
       isConnected: false,
       address: null,
@@ -136,7 +181,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { walletId } = JSON.parse(saved) as { address: string; walletId: WalletId };
       if (walletId) {
-        // Give extensions time to inject before silent reconnect
         setTimeout(() => {
           _connect(walletId, true).catch(() => localStorage.removeItem(STORAGE_KEY));
         }, 800);

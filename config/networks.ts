@@ -22,6 +22,6 @@ export const NETWORKS = {
 export type NetworkName = keyof typeof NETWORKS;
 
 export const ACTIVE_NETWORK: NetworkName =
-  ((import.meta.env.VITE_STARKNET_NETWORK as string) as NetworkName) || 'sepolia';
+  ((import.meta.env.VITE_STARKNET_NETWORK as string) as NetworkName) || 'mainnet';
 
 export const ACTIVE_NETWORK_CONFIG = NETWORKS[ACTIVE_NETWORK];
