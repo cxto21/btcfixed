@@ -50,6 +50,22 @@
 
 ## 📅 Roadmap por Sesión (MVPs Incrementales)
 
+> **Leyenda**: ✅ Completada | 🚧 En progreso | ⏳ Pendiente
+
+| Sesión | Feature                  | Status       |
+|--------|--------------------------|--------------|
+| 1      | Auth + Dashboard reales  | ✅ Completada |
+| 1b     | Mainnet + Cartridge      | ✅ Completada |
+| 2      | Staking STRK (StarkZap)  | ✅ Completada |
+| 3      | Swaps (AVNU)             | ⏳ Pendiente  |
+| 4      | Lending                  | ⏳ Pendiente  |
+| 5      | Activity History         | ⏳ Pendiente  |
+| 6      | KYC mock                 | ⏳ Pendiente  |
+| 7      | UI Polish                | ⏳ Pendiente  |
+| 8      | Cloudflare Deploy        | ⏳ Pendiente  |
+| 9      | Gasless (AVNU Paymaster) | ⏳ Pendiente  |
+| 10     | React Native             | ⏳ Pendiente  |
+
 ### **SESIÓN 1: Setup & Fundamentos Blockchain**
 
 #### Objetivos

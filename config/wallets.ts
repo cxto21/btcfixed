@@ -1,5 +1,6 @@
 // BTCFixed – Wallet definitions for browser-injected Starknet wallets
 import ControllerConnector from '@cartridge/controller';
+import type { Call } from 'starknet';
 import { NETWORKS } from './networks';
 
 export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'any';
@@ -100,4 +101,39 @@ export function getWalletObject(id: WalletId): StarknetBrowserWallet | null {
 export function truncateAddress(address: string): string {
   if (!address || address.length < 10) return address;
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+// ---------------------------------------------------------------------------
+// Transaction execution helpers (Session 2+)
+// ---------------------------------------------------------------------------
+
+interface UnknownAccount {
+  execute: (calls: Call[]) => Promise<{ transaction_hash: string }>;
+}
+
+/**
+ * Execute a list of Starknet calls on behalf of the connected wallet.
+ * - Cartridge: uses probe() to get the WalletAccount without showing a popup
+ * - Argent X / Braavos: uses the injected wallet's account object
+ * Returns the transaction hash.
+ */
+export async function executeTransaction(
+  walletId: WalletId,
+  calls: Call[],
+): Promise<string> {
+  if (walletId === 'cartridge') {
+    const connector = getCartridgeConnector();
+    const account = await connector.probe();
+    if (!account) throw new Error('Cartridge no conectado. Por favor reconecta tu cuenta.');
+    const result = await account.execute(calls);
+    if (!result?.transaction_hash) throw new Error('Cartridge: no se devolvió hash de transacción');
+    return result.transaction_hash;
+  }
+
+  const wallet = getWalletObject(walletId);
+  if (!wallet) throw new Error(`Billetera "${walletId}" no disponible.`);
+  const account = wallet.account as UnknownAccount;
+  if (!account?.execute) throw new Error('La billetera no soporta ejecución de transacciones.');
+  const result = await account.execute(calls);
+  return result.transaction_hash;
 }
