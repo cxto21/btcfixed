@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({
           {copied ? (
             <>
               <Check size={9} className="text-green-500" />
-              <span className="text-green-500">¡Copiado!</span>
+              <span className="text-green-500">Copied!</span>
             </>
           ) : (
             <>

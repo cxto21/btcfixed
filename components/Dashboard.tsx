@@ -301,7 +301,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
                     {activity.type}
                   </p>
                   <p className="text-[9px] font-bold text-black/30 dark:text-white/60 uppercase tracking-widest">
-                    Staking live in Sesión 2
+                    Coming soon · Starknet
                   </p>
                 </div>
               </div>

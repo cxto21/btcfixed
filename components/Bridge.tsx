@@ -130,9 +130,12 @@ const Bridge: React.FC = () => {
   return (
     <div className="space-y-10 animate-modern">
       <div className="space-y-2">
-        <h2 className="text-4xl font-bold tracking-tighter uppercase dark:text-white">SWAP TERMINAL</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-4xl font-bold tracking-tighter uppercase dark:text-white">SWAP TERMINAL</h2>
+          <span className="px-2 py-0.5 border-2 border-[#F7931A] text-[#F7931A] text-[8px] font-black uppercase tracking-widest">MAINNET</span>
+        </div>
         <p className="text-black/40 dark:text-white/70 text-sm font-medium uppercase tracking-widest">
-          Instant Liquidity · AVNU DEX Aggregator
+          Instant Liquidity · AVNU DEX Aggregator · Starknet Mainnet
         </p>
       </div>
 
@@ -300,9 +303,9 @@ const Bridge: React.FC = () => {
       <div className="flex items-start gap-4 p-5 border-2 border-black dark:border-white bg-muted/50 dark:bg-zinc-900/50">
         <ArrowUpDown size={20} className="mt-1 shrink-0 dark:text-white" strokeWidth={3} />
         <div>
-          <p className="text-xs font-black uppercase tracking-widest mb-1 dark:text-white">DEX Aggregator</p>
+          <p className="text-xs font-black uppercase tracking-widest mb-1 dark:text-white">DEX Aggregator · Mainnet</p>
           <p className="text-[11px] text-black/60 dark:text-white/80 leading-relaxed font-medium">
-            Swaps are executed by <strong>AVNU</strong>, Starknet’s leading liquidity aggregator. The best available route is always selected across multiple DEXs.
+            Swaps are executed by <strong>AVNU</strong>, Starknet’s leading liquidity aggregator. The best available route is always selected across multiple DEXs on <strong>Starknet Mainnet</strong>.
           </p>
         </div>
       </div>
