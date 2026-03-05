@@ -57,7 +57,7 @@
 | 1      | Auth + Dashboard reales  | ✅ Completada |
 | 1b     | Mainnet + Cartridge      | ✅ Completada |
 | 2      | Staking STRK (StarkZap)  | ✅ Completada |
-| 3      | Swaps (AVNU)             | ⏳ Pendiente  |
+| 3      | Swaps (AVNU)             | ✅ Completada |
 | 4      | Lending                  | ⏳ Pendiente  |
 | 5      | Activity History         | ⏳ Pendiente  |
 | 6      | KYC mock                 | ⏳ Pendiente  |
