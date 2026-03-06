@@ -88,7 +88,7 @@ const AppShell: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-black text-black dark:text-white max-w-md mx-auto relative overflow-x-hidden transition-colors duration-300">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#111] text-black dark:text-white max-w-md mx-auto relative overflow-x-hidden transition-colors duration-300">
       <Header
         isPrivacyMode={isPrivacyMode}
         setIsPrivacyMode={setIsPrivacyMode}
@@ -97,7 +97,7 @@ const AppShell: React.FC = () => {
         activeTab={activeTab}
       />
 
-      <main ref={mainRef} className="flex-1 pb-24 pt-6 px-5 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 pb-24 pt-4 px-5 overflow-y-auto">
         {renderContent()}
       </main>
 
