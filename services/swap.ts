@@ -103,7 +103,7 @@ export async function getQuote(
   takerAddress: string = '0x0',
 ): Promise<SwapQuote> {
   if (!sellAmount || parseFloat(sellAmount) <= 0) {
-    throw new Error('Ingresa un monto mayor a 0');
+    throw new Error('Enter an amount greater than 0');
   }
 
   const sellAmountHex = toHex(sellAmount, sellToken.decimals);
@@ -122,12 +122,12 @@ export async function getQuote(
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`AVNU: no hay liquidez disponible para este par (${res.status}${text ? ': ' + text.slice(0, 100) : ''})`);
+    throw new Error(`AVNU: no liquidity available for this pair (${res.status}${text ? ': ' + text.slice(0, 100) : ''})`);
   }
 
   const data: SwapQuote[] = await res.json();
   if (!Array.isArray(data) || data.length === 0) {
-    throw new Error('AVNU: no se encontraron quotes para este par de tokens');
+    throw new Error('AVNU: no quotes found for this token pair');
   }
 
   return data[0];
@@ -155,7 +155,7 @@ export async function buildSwapCalls(
 
   const data: AvnuBuildResponse = await res.json();
   if (!data.calls?.length) {
-    throw new Error('AVNU: no se generaron calls para el swap');
+    throw new Error('AVNU: no calls generated for the swap');
   }
 
   return data.calls.map(toStarknetCall);

@@ -93,7 +93,7 @@ export function useSwap(): SwapState {
         setStatus('ready');
       } catch (err: unknown) {
         if (!mountedRef.current) return;
-        setError(err instanceof Error ? err.message : 'Error al obtener quote');
+        setError(err instanceof Error ? err.message : 'Error getting quote');
         setStatus('error');
         setBuyAmount('');
         setQuote(null);

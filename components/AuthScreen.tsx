@@ -218,8 +218,8 @@ const AuthScreen: React.FC = () => {
           <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border-l-4 border-[#F7931A]">
             <Shield size={16} className="mt-1 shrink-0 text-[#F7931A]" />
             <p className="text-[11px] text-black font-bold leading-relaxed">
-              Bitcoin DeFi en Starknet. Sin liquidaciones en vaults de tasa fija.
-              Total transparencia con pruebas on-chain.
+              Bitcoin DeFi on Starknet. No liquidations on fixed-rate vaults.
+              Full transparency with on-chain proofs.
             </p>
           </div>
           <p className="text-[10px] text-black/40 font-black uppercase tracking-[0.2em] text-center">

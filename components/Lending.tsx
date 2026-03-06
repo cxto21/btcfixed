@@ -66,7 +66,7 @@ const TxBanner: React.FC<TxBannerProps> = ({ txHash, status, error, onClose }) =
             rel="noopener noreferrer"
             className="text-[10px] text-green-600 dark:text-green-400 flex items-center gap-1 mt-1 hover:underline"
           >
-            Ver en explorer <ExternalLink size={10} />
+            View on explorer <ExternalLink size={10} />
           </a>
         </>
       ) : (
