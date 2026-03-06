@@ -30,11 +30,9 @@ const TOKEN_COLORS: Record<string, string> = {
 function TokenSelector({
   selected,
   onSelect,
-  disabledSymbol,
 }: {
   selected: TokenConfig;
   onSelect: (t: TokenConfig) => void;
-  disabledSymbol: string;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -58,17 +56,11 @@ function TokenSelector({
             {SWAP_TOKENS.map((sym) => {
               const token = ACTIVE_TOKENS[sym as SwapTokenSymbol];
               if (!token) return null;
-              const isDisabled = sym === disabledSymbol;
               return (
                 <button
                   key={sym}
-                  onClick={() => { if (!isDisabled) { onSelect(token); setOpen(false); } }}
-                  disabled={isDisabled}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors ${
-                    isDisabled
-                      ? 'opacity-30 cursor-not-allowed'
-                      : 'hover:bg-gray-50 dark:hover:bg-white/5'
-                  } ${sym === selected.symbol ? 'bg-gray-50 dark:bg-white/5' : ''}`}
+                  onClick={() => { onSelect(token); setOpen(false); }}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/5 ${sym === selected.symbol ? 'bg-gray-50 dark:bg-white/5' : ''}`}
                 >
                   <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: TOKEN_COLORS[sym] ?? '#888' }}>
                     {sym[0]}
@@ -91,11 +83,22 @@ const Bridge: React.FC = () => {
   const { balance } = useBalance(address, swap.sellToken, 20_000);
   const balanceFormatted = balance?.formatted ?? '0';
 
+  const isSameToken = swap.sellToken.symbol === swap.buyToken.symbol;
   const isQuoting = swap.status === 'quoting';
   const isReady = swap.status === 'ready';
   const isPending = swap.status === 'pending';
   const isSuccess = swap.status === 'success';
   const isError = swap.status === 'error';
+
+  const handleSetSellToken = (token: TokenConfig) => {
+    if (token.symbol === swap.buyToken.symbol) swap.flipTokens();
+    else swap.setSellToken(token);
+  };
+
+  const handleSetBuyToken = (token: TokenConfig) => {
+    if (token.symbol === swap.sellToken.symbol) swap.flipTokens();
+    else swap.setBuyToken(token);
+  };
 
   const routeName = swap.quote?.routes?.[0]?.name;
   const isGasless =
@@ -156,8 +159,7 @@ const Bridge: React.FC = () => {
             />
             <TokenSelector
               selected={swap.sellToken}
-              onSelect={swap.setSellToken}
-              disabledSymbol={swap.buyToken.symbol}
+              onSelect={handleSetSellToken}
             />
           </div>
         </div>
@@ -196,8 +198,7 @@ const Bridge: React.FC = () => {
             )}
             <TokenSelector
               selected={swap.buyToken}
-              onSelect={swap.setBuyToken}
-              disabledSymbol={swap.sellToken.symbol}
+              onSelect={handleSetBuyToken}
             />
           </div>
         </div>
@@ -225,7 +226,7 @@ const Bridge: React.FC = () => {
       {/* Execute button */}
       <button
         onClick={isSuccess || isError ? swap.resetStatus : swap.executeSwap}
-        disabled={isPending || isQuoting || (!isReady && !isSuccess && !isError) || !address}
+        disabled={isPending || isQuoting || isSameToken || (!isReady && !isSuccess && !isError) || !address}
         className="w-full h-14 rounded-2xl bg-black dark:bg-white text-white dark:text-black text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:opacity-90"
       >
         {isPending ? (

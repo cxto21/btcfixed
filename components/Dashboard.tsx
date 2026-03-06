@@ -13,12 +13,19 @@ import {
   Send,
   Download,
   ChevronRight,
+  Eye,
+  EyeOff,
+  X,
+  Copy,
+  Check,
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBalance } from '../hooks/useBalance';
 import { usePrices } from '../hooks/usePrices';
 import { useActivity } from '../hooks/useActivity';
 import { ACTIVE_TOKENS } from '../config/tokens';
+import { truncateAddress } from '../config/wallets';
 
 const chartData = [
   { v: 40 }, { v: 42 }, { v: 41 }, { v: 45 }, { v: 44 }, { v: 48 }, { v: 52 },
@@ -33,13 +40,57 @@ const TOKEN_COLORS: Record<string, string> = {
 
 interface DashboardProps {
   isPrivacyMode: boolean;
+  setIsPrivacyMode: (v: boolean) => void;
   onEarnYield: (amount: string) => void;
   onSeeAllActivity: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSeeAllActivity }) => {
+/* ─── Receive Modal ─── */
+const ReceiveModal: React.FC<{ address: string; onClose: () => void }> = ({ address, onClose }) => {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white dark:bg-[#1a1a1a] rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-5 animate-modern">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold dark:text-white">Receive</h3>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+            <X size={18} className="text-gray-400" />
+          </button>
+        </div>
+        <div className="flex justify-center">
+          <div className="bg-white p-4 rounded-2xl">
+            <QRCodeSVG value={address} size={200} level="M" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-gray-400 text-center">Your Starknet Address</p>
+          <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
+            <p className="text-xs font-mono text-gray-600 dark:text-gray-300 break-all text-center leading-relaxed">
+              {address}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={handleCopy}
+          className="w-full h-12 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-semibold text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
+        >
+          {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy Address</>}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, onEarnYield, onSeeAllActivity }) => {
   const { address } = useAuth();
   const [displayCurrency, setDisplayCurrency] = useState<'USD' | 'BTC'>('USD');
+  const [showReceiveModal, setShowReceiveModal] = useState(false);
   const recentActivity = useActivity();
 
   const { balance: ethBalance, isLoading: ethLoading, refetch: refetchEth } = useBalance(
@@ -122,11 +173,18 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
       {/* ─── Total Portfolio ─── */}
       <section className="text-center pt-2 pb-4">
         <p className="text-xs font-medium text-gray-400 dark:text-gray-500 mb-1">Total portfolio</p>
-        <div className="flex items-center justify-center gap-1">
+        <div className="flex items-center justify-center gap-2">
           <h2 className="text-4xl font-bold tracking-tight dark:text-white">
             {displayCurrency === 'USD' ? '$' : '₿'}
             {hide(displayValue)}
           </h2>
+          <button
+            onClick={() => setIsPrivacyMode(!isPrivacyMode)}
+            className={`p-1.5 rounded-full transition-all ${isPrivacyMode ? 'text-[#F7931A]' : 'text-gray-300 dark:text-gray-600 hover:text-gray-500'}`}
+            aria-label="Toggle privacy mode"
+          >
+            {isPrivacyMode ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
           {isLoading && (
             <RefreshCw size={14} className="animate-spin text-gray-300 dark:text-gray-600" />
           )}
@@ -143,7 +201,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
       <div className="flex justify-center gap-6">
         {[
           { icon: Send, label: 'Swap', action: () => onEarnYield('0') },
-          { icon: Download, label: 'Receive', action: () => navigator.clipboard.writeText(address ?? '') },
+          { icon: Download, label: 'Receive', action: () => setShowReceiveModal(true) },
           { icon: TrendingUp, label: 'Earn', action: () => onEarnYield(ethBalance.formatted) },
           { icon: RefreshCw, label: 'Refresh', action: () => { refetchEth(); refetchStrk(); refetchWbtc(); } },
         ].map((action) => (
@@ -279,6 +337,11 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
           )}
         </div>
       </div>
+
+      {/* ─── Receive Modal ─── */}
+      {showReceiveModal && address && (
+        <ReceiveModal address={address} onClose={() => setShowReceiveModal(false)} />
+      )}
     </div>
   );
 };

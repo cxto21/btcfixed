@@ -140,8 +140,8 @@ const SupplyTab: React.FC<SupplyTabProps> = ({
     ? { symbol: selectedAsset.symbol, name: selectedAsset.name, address: selectedAsset.address, decimals: selectedAsset.decimals, coingeckoId: '' }
     : null;
   const { balance } = useBalance(
-    userAddress || null,
-    tokenConfig ?? { symbol: '', name: '', address: '', decimals: 18, coingeckoId: '' },
+    tokenConfig && userAddress ? userAddress : null,
+    tokenConfig ?? { symbol: '', name: '', address: '0x0', decimals: 18, coingeckoId: '' },
     15_000,
   );
 

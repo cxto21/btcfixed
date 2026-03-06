@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({
 
   const getTitle = () => {
     switch (activeTab) {
-      case 'dashboard': return 'Home';
+      case 'dashboard': return address ? truncateAddress(address) : 'Home';
       case 'bridge':    return 'Swap';
       case 'staking':   return 'Earn';
       case 'lending':   return 'Vault';

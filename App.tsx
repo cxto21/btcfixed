@@ -52,6 +52,7 @@ const AppShell: React.FC = () => {
         return (
           <Dashboard
             isPrivacyMode={isPrivacyMode}
+            setIsPrivacyMode={setIsPrivacyMode}
             onEarnYield={handleEarnYield}
             onSeeAllActivity={() => setActiveTab('activity')}
           />
@@ -80,6 +81,7 @@ const AppShell: React.FC = () => {
         return (
           <Dashboard
             isPrivacyMode={isPrivacyMode}
+            setIsPrivacyMode={setIsPrivacyMode}
             onEarnYield={handleEarnYield}
             onSeeAllActivity={() => setActiveTab('activity')}
           />

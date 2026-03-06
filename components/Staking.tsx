@@ -135,7 +135,7 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
   return (
     <div className="space-y-5">
       {/* APY Card */}
-      <div className="bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] rounded-2xl p-5 text-white">
+      <div className="bg-gradient-to-br from-[#F7931A] to-[#E67E00] rounded-2xl p-5 text-white">
         <div className="flex justify-between items-start">
           <div>
             <p className="text-xs font-medium text-white/70 mb-1">Effective APY</p>

@@ -1,8 +1,9 @@
-<div align="center">
-<img width="1200" height="475" alt="BTCFixed" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+<h1 align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/BTC_oin.png" width="40" height="40" alt="BTC icon" style="vertical-align:middle;" />
+  BTCFixed
+</h1>
 
-# BTCFixed — Bitcoin DeFi on Starknet
+<p align="center"><em>Bitcoin DeFi on Starknet</em></p>
 
 A mobile-first DeFi platform for Bitcoin holders, built on Starknet mainnet.
 
