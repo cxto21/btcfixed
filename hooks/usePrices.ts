@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 // Public CoinGecko price API – no key required
 const PRICE_URL =
-  'https://api.coingecko.com/api/v3/simple/price?ids=ethereum%2Cstarknet%2Cusd-coin&vs_currencies=usd&include_24hr_change=true';
+  'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Cstarknet%2Cusd-coin&vs_currencies=usd&include_24hr_change=true';
 
 export interface PriceData {
   usd: number;
@@ -13,6 +13,7 @@ export type Prices = Record<string, PriceData>;
 
 // Safe fallback prices (used when API is unavailable)
 const FALLBACK: Prices = {
+  bitcoin: { usd: 95000, usd_24h_change: 0 },
   ethereum: { usd: 3000, usd_24h_change: 0 },
   starknet: { usd: 0.5, usd_24h_change: 0 },
   'usd-coin': { usd: 1, usd_24h_change: 0 },
@@ -33,6 +34,7 @@ export function usePrices(pollMs = 60_000) {
           await res.json();
         if (!cancelled) {
           setPrices({
+            bitcoin: { usd: data.bitcoin?.usd ?? FALLBACK.bitcoin.usd, usd_24h_change: data.bitcoin?.usd_24h_change },
             ethereum: { usd: data.ethereum?.usd ?? FALLBACK.ethereum.usd, usd_24h_change: data.ethereum?.usd_24h_change },
             starknet: { usd: data.starknet?.usd ?? FALLBACK.starknet.usd, usd_24h_change: data.starknet?.usd_24h_change },
             'usd-coin': { usd: data['usd-coin']?.usd ?? FALLBACK['usd-coin'].usd },
