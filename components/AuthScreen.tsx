@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, ExternalLink, Loader2, Shield, Wallet, Zap } from 'lucide-react';
+import { AlertCircle, ExternalLink, Loader2, Mail, Shield, Wallet, Zap } from 'lucide-react';
+import { usePrivy } from '@privy-io/react-auth';
 import { useAuth } from '../contexts/AuthContext';
+import { setPrivyLogout } from '../contexts/AuthContext';
 import { detectAvailableWallets, WALLET_METADATA, type WalletId, type WalletInfo } from '../config/wallets';
 import { ACTIVE_NETWORK, ACTIVE_NETWORK_CONFIG } from '../config/networks';
 
@@ -98,9 +100,28 @@ function InstallLink({ wallet }: { wallet: WalletInfo }) {
 }
 
 const AuthScreen: React.FC = () => {
-  const { connect, isLoading, error } = useAuth();
+  const { connect, connectWithAddress, isLoading, error } = useAuth();
   const [detected, setDetected] = useState<WalletInfo[]>([]);
   const [connecting, setConnecting] = useState<WalletId | null>(null);
+
+  // Privy hooks
+  const privy = usePrivy();
+  const privyAvailable = privy.ready;
+
+  // When Privy authenticates, sync address into our AuthContext
+  useEffect(() => {
+    if (!privy.authenticated || !privy.user) return;
+    // Extract wallet address from Privy user — check linked accounts for any wallet
+    const user = privy.user as Record<string, unknown>;
+    const wallet = user.wallet as { address?: string } | undefined;
+    if (wallet?.address) {
+      connectWithAddress('privy', wallet.address);
+    } else {
+      // Use Privy user ID as a placeholder address for non-wallet Privy logins
+      const userId = (user.id as string) ?? 'privy-user';
+      connectWithAddress('privy', userId);
+    }
+  }, [privy.authenticated, privy.user, connectWithAddress]);
 
   // Detect injected wallets after a short delay so extensions can inject
   useEffect(() => {
@@ -180,6 +201,29 @@ const AuthScreen: React.FC = () => {
           isLoading={connecting === 'cartridge' && isLoading}
           accent
         />
+
+        {/* ── Privy: email / social login ── */}
+        {privyAvailable && (
+          <button
+            onClick={() => privy.login()}
+            className="w-full h-16 flex items-center justify-between px-6 bg-[#6851FF] text-white transition-opacity hover:opacity-90"
+          >
+            <div className="flex items-center gap-3">
+              <Mail size={24} />
+              <div className="text-left">
+                <span className="text-base font-bold tracking-tighter uppercase block">
+                  Privy
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-widest opacity-60">
+                  Email · Google · Twitter · Apple
+                </span>
+              </div>
+            </div>
+            <span className="text-[10px] font-black tracking-widest uppercase opacity-60">
+              Login →
+            </span>
+          </button>
+        )}
 
         {/* Separator */}
         {(detected.length > 0 || notInstalled.length > 0) && (

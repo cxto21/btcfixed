@@ -16,6 +16,12 @@ import {
 } from '../config/wallets';
 import { ACTIVE_NETWORK } from '../config/networks';
 
+// Privy logout helper — lazily resolved to avoid errors if PrivyProvider is absent
+let _privyLogout: (() => Promise<void>) | null = null;
+export function setPrivyLogout(fn: (() => Promise<void>) | null) {
+  _privyLogout = fn;
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -32,6 +38,7 @@ export interface AuthState {
 interface AuthContextValue extends AuthState {
   availableWallets: WalletInfo[];
   connect: (walletId: WalletId) => Promise<void>;
+  connectWithAddress: (walletId: WalletId, address: string) => void;
   disconnect: () => void;
 }
 
@@ -162,6 +169,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     cleanupRef.current = null;
     // If Cartridge, also call their disconnect
     try { getCartridgeConnector().disconnect(); } catch { /* ignore */ }
+    // If Privy, also call their logout
+    if (_privyLogout) { _privyLogout().catch(() => {}); }
     setState({
       isConnected: false,
       address: null,
@@ -178,7 +187,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return;
     try {
-      const { walletId } = JSON.parse(saved) as { address: string; walletId: WalletId };
+      const { address, walletId } = JSON.parse(saved) as { address: string; walletId: WalletId };
+      if (walletId === 'privy') {
+        // Privy sessions are handled by Privy SDK — just restore state
+        // Privy's own provider will manage session validity
+        setState({
+          isConnected: true,
+          address,
+          walletId: 'privy',
+          network: ACTIVE_NETWORK,
+          isLoading: false,
+          error: null,
+        });
+        return;
+      }
       if (walletId) {
         setTimeout(() => {
           _connect(walletId, true).catch(() => localStorage.removeItem(STORAGE_KEY));
@@ -194,9 +216,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [_connect],
   );
 
+  /** Direct connect path for Privy — address is already known from Privy SDK */
+  const connectWithAddress = useCallback(
+    (walletId: WalletId, address: string) => {
+      setState({
+        isConnected: true,
+        address,
+        walletId,
+        network: ACTIVE_NETWORK,
+        isLoading: false,
+        error: null,
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ address, walletId }));
+    },
+    [],
+  );
+
   return (
     <AuthContext.Provider
-      value={{ ...state, availableWallets, connect, disconnect: _disconnect }}
+      value={{ ...state, availableWallets, connect, connectWithAddress, disconnect: _disconnect }}
     >
       {children}
     </AuthContext.Provider>

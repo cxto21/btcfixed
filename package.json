@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@cartridge/controller": "^0.13.9",
+    "@privy-io/react-auth": "^3.16.0",
     "lucide-react": "^0.563.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.4",

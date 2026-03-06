@@ -9,8 +9,19 @@ import Staking from './components/Staking';
 import Lending from './components/Lending';
 import Verification from './components/Verification';
 import ActivityHistory from './components/ActivityHistory';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider, useAuth, setPrivyLogout } from './contexts/AuthContext';
+import { usePrivy } from '@privy-io/react-auth';
 import type { TabType } from './types';
+
+// Bridge to register Privy logout function into AuthContext
+function PrivyLogoutBridge() {
+  const { logout } = usePrivy();
+  React.useEffect(() => {
+    setPrivyLogout(logout);
+    return () => setPrivyLogout(null);
+  }, [logout]);
+  return null;
+}
 
 // Inner shell – rendered only when wallet is connected
 const AppShell: React.FC = () => {
@@ -111,6 +122,7 @@ const AppShell: React.FC = () => {
 // Root – wraps everything in AuthProvider
 const App: React.FC = () => (
   <AuthProvider>
+    <PrivyLogoutBridge />
     <AppShell />
   </AuthProvider>
 );

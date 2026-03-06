@@ -3,7 +3,7 @@ import ControllerConnector from '@cartridge/controller';
 import type { Call } from 'starknet';
 import { NETWORKS } from './networks';
 
-export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'any';
+export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'privy' | 'any';
 
 export interface WalletInfo {
   id: WalletId;
@@ -50,6 +50,12 @@ export const WALLET_METADATA: Record<WalletId, WalletInfo> = {
     name: 'Braavos',
     icon: 'https://braavos.app/favicon.ico',
     installUrl: 'https://braavos.app/',
+  },
+  privy: {
+    id: 'privy',
+    name: 'Privy',
+    icon: 'https://privy.io/favicon.ico',
+    installUrl: 'https://privy.io/',
   },
   any: {
     id: 'any',
