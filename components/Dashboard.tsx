@@ -12,15 +12,13 @@ import {
   ArrowDownLeft,
   Gift,
   RefreshCw,
-  ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBalance } from '../hooks/useBalance';
 import { usePrices } from '../hooks/usePrices';
 import { useActivity } from '../hooks/useActivity';
 import { ACTIVE_TOKENS } from '../config/tokens';
-import { ACTIVE_NETWORK, ACTIVE_NETWORK_CONFIG } from '../config/networks';
-import { truncateAddress } from '../config/wallets';
+import { ACTIVE_NETWORK } from '../config/networks';
 
 const chartData = [
   { v: 40 }, { v: 42 }, { v: 41 }, { v: 45 }, { v: 44 }, { v: 48 }, { v: 52 },
@@ -88,13 +86,13 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
   };
 
   return (
-    <div className="space-y-12 animate-modern relative z-10">
+    <div className="space-y-5 animate-modern relative z-10">
       {/* ─── Primary Balance ─── */}
-      <section className="space-y-4">
-        <div className="flex justify-between items-end">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={12} strokeWidth={3} className="text-green-600" />
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-black/30 dark:text-white/60">
+      <section className="space-y-1">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-1.5">
+            <TrendingUp size={10} strokeWidth={3} className="text-green-600" />
+            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-black/30 dark:text-white/60">
               PORTFOLIO BALANCE
             </p>
           </div>
@@ -104,132 +102,115 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
             )}
             <button
               onClick={() => setDisplayCurrency(displayCurrency === 'USD' ? 'BTC' : 'USD')}
-              className="text-[10px] font-black bg-[#F7931A] text-white px-2 py-0.5 tracking-widest uppercase italic border-2 border-black dark:border-white"
+              className="text-[9px] font-black bg-[#F7931A] text-white px-1.5 py-0.5 tracking-widest uppercase italic border border-black dark:border-white"
             >
               {displayCurrency}
             </button>
           </div>
         </div>
 
-        <h2 className="text-[42px] font-bold tracking-tight leading-none flex items-start dark:text-white">
+        <h2 className="text-[36px] font-bold tracking-tight leading-none flex items-start dark:text-white">
           {displayCurrency === 'USD' && (
-            <span className="text-[20px] mt-1 mr-1 text-black/30 dark:text-white/60 font-black">$</span>
+            <span className="text-[18px] mt-0.5 mr-0.5 text-black/30 dark:text-white/60 font-black">$</span>
           )}
           {displayCurrency === 'BTC' && (
-            <span className="text-[20px] mt-1 mr-1 text-[#F7931A] font-black">₿</span>
+            <span className="text-[18px] mt-0.5 mr-0.5 text-[#F7931A] font-black">₿</span>
           )}
           {hide(displayValue)}
-          <span className="text-[12px] mt-2 ml-1 text-black/30 dark:text-white/60 font-black tracking-widest">
+          <span className="text-[11px] mt-1.5 ml-1 text-black/30 dark:text-white/60 font-black tracking-widest">
             {displayCurrency}
           </span>
         </h2>
 
-        {/* Wallet address chip */}
-        {address && (
-          <a
-            href={`${ACTIVE_NETWORK_CONFIG.explorerUrl}/contract/${address}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold text-black/40 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-          >
-            {truncateAddress(address)}
-            <ExternalLink size={9} />
-            {ACTIVE_NETWORK_CONFIG.isTestnet && (
-              <span className="ml-1 bg-amber-400 text-black text-[8px] font-black uppercase px-1 py-0.5">
-                SEPOLIA
-              </span>
-            )}
-          </a>
-        )}
-
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-2 pt-1">
           <button
             onClick={() => onEarnYield(ethBalance.formatted)}
-            className="flex-1 h-14 bg-black text-white dark:bg-white dark:text-black font-bold text-xs tracking-widest neo-shadow-orange"
+            className="flex-1 h-11 bg-black text-white dark:bg-white dark:text-black font-bold text-[11px] tracking-widest neo-shadow-orange"
           >
             EARN YIELD
           </button>
           <button
             onClick={() => { refetchEth(); refetchStrk(); refetchWbtc(); }}
-            className="h-14 w-14 border-2 border-black dark:border-white font-bold bg-white dark:bg-black dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900 flex items-center justify-center"
+            className="h-11 w-11 border-2 border-black dark:border-white font-bold bg-white dark:bg-black dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900 flex items-center justify-center"
             title="Refresh balances"
           >
-            <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
           </button>
         </div>
       </section>
 
-      {/* ─── Market Overview ─── */}
-      <div className="border-2 border-black dark:border-white p-0 bg-white dark:bg-black neo-shadow">
-        <div className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 flex justify-between items-center">
-          <span className="text-[10px] font-black tracking-widest uppercase flex items-center gap-2">
-            <ShieldCheck size={12} className="text-[#F7931A]" />
-            Market
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-[9px] font-bold uppercase">
-              {ACTIVE_NETWORK === 'sepolia' ? 'Sepolia Testnet' : 'Mainnet'}
+      {/* ─── Market + Yield Grid ─── */}
+      <div className="grid grid-cols-2 gap-2">
+        {/* Market Prices */}
+        <div className="border-2 border-black dark:border-white bg-white dark:bg-black col-span-1">
+          <div className="bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 flex justify-between items-center">
+            <span className="text-[9px] font-black tracking-widest uppercase flex items-center gap-1.5">
+              <ShieldCheck size={10} className="text-[#F7931A]" />
+              Market
             </span>
-          </span>
-        </div>
-        <div className="p-4 space-y-3 font-mono dark:text-white/90">
-          {[
-            { label: 'BTC/USD', price: btcPrice, change: prices.bitcoin?.usd_24h_change },
-            { label: 'ETH/USD', price: ethPrice, change: prices.ethereum?.usd_24h_change },
-            { label: 'STRK/USD', price: strkPrice, change: prices.starknet?.usd_24h_change },
-          ].map((row) => (
-            <div key={row.label} className="flex justify-between items-center text-[10px]">
-              <span className="opacity-40 uppercase dark:opacity-70">{row.label}:</span>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-[#F7931A]">
-                  ${row.price.toLocaleString('en-US', { maximumFractionDigits: row.price < 10 ? 4 : 2 })}
-                </span>
-                {row.change != null && (
-                  <span className={`flex items-center gap-0.5 text-[9px] font-bold ${row.change >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {row.change >= 0 ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
-                    {Math.abs(row.change).toFixed(1)}%
+            <span className="flex items-center gap-1">
+              <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[8px] font-bold uppercase">
+                {ACTIVE_NETWORK === 'sepolia' ? 'Testnet' : 'Live'}
+              </span>
+            </span>
+          </div>
+          <div className="p-2.5 space-y-2 font-mono dark:text-white/90">
+            {[
+              { label: 'BTC', price: btcPrice, change: prices.bitcoin?.usd_24h_change },
+              { label: 'ETH', price: ethPrice, change: prices.ethereum?.usd_24h_change },
+              { label: 'STRK', price: strkPrice, change: prices.starknet?.usd_24h_change },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between items-center text-[9px]">
+                <span className="opacity-40 uppercase dark:opacity-70 font-bold">{row.label}</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-bold text-[#F7931A]">
+                    ${row.price.toLocaleString('en-US', { maximumFractionDigits: row.price < 10 ? 4 : 2 })}
                   </span>
-                )}
+                  {row.change != null && (
+                    <span className={`flex items-center text-[8px] font-bold ${row.change >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                      {row.change >= 0 ? <TrendingUp size={8} /> : <TrendingDown size={8} />}
+                      {Math.abs(row.change).toFixed(1)}%
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* ─── Yield Chart ─── */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-xs font-black tracking-widest uppercase dark:text-white">Yield Projection</h3>
-          <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
-            +5.25% APR Fixed
-          </span>
-        </div>
-        <div className="h-32 w-full border-b-2 border-black dark:border-white">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <XAxis dataKey="name" hide />
-              <Area
-                type="stepAfter"
-                dataKey="v"
-                stroke="#F7931A"
-                strokeWidth={4}
-                fillOpacity={0.1}
-                fill="#F7931A"
-                animationDuration={1500}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        {/* Yield Chart */}
+        <div className="border-2 border-black dark:border-white bg-white dark:bg-black col-span-1 flex flex-col">
+          <div className="bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 flex justify-between items-center">
+            <span className="text-[9px] font-black tracking-widest uppercase">Yield</span>
+            <span className="text-[8px] font-black text-green-400 dark:text-green-600 uppercase">+5.25% APR</span>
+          </div>
+          <div className="flex-1 min-h-0 p-1">
+            <ResponsiveContainer width="100%" height={70}>
+              <AreaChart data={chartData}>
+                <XAxis dataKey="name" hide />
+                <Area
+                  type="stepAfter"
+                  dataKey="v"
+                  stroke="#F7931A"
+                  strokeWidth={2}
+                  fillOpacity={0.15}
+                  fill="#F7931A"
+                  animationDuration={1500}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
       {/* ─── Token Balances ─── */}
-      <div className="space-y-6">
+      <div className="space-y-3">
         <div className="flex justify-between items-center">
-          <h3 className="text-xs font-black tracking-widest uppercase dark:text-white">Token Balances</h3>
-          <Lock size={16} strokeWidth={3} className="dark:text-white" />
+          <h3 className="text-[10px] font-black tracking-widest uppercase dark:text-white">Token Balances</h3>
+          <Lock size={14} strokeWidth={3} className="dark:text-white" />
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {[
             {
               symbol: 'WBTC',
@@ -259,14 +240,14 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
           ].map((token) => (
             <div
               key={token.symbol}
-              className={`flex items-center justify-between p-5 border-2 ${
+              className={`flex items-center justify-between p-3 border-2 ${
                 'accent' in token && token.accent
                   ? 'border-[#F7931A] bg-[#F7931A]/5 dark:bg-[#F7931A]/5'
                   : 'border-black dark:border-white hover:border-[#F7931A] dark:hover:border-[#F7931A] bg-white dark:bg-black'
               } transition-all`}
             >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 flex items-center justify-center font-bold text-lg border-2 ${
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 flex items-center justify-center font-bold text-sm border-2 ${
                   'accent' in token && token.accent
                     ? 'border-[#F7931A] bg-[#F7931A] text-white'
                     : 'border-black dark:border-white bg-zinc-50 dark:bg-zinc-900 dark:text-white'
@@ -274,24 +255,24 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
                   {token.symbol === 'WBTC' ? '₿' : token.symbol[0]}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-bold text-sm tracking-tight uppercase dark:text-white">
-                      {token.name}
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-bold text-[12px] tracking-tight uppercase dark:text-white">
+                      {token.symbol}
                     </p>
-                    <span className="text-[8px] px-1 font-black uppercase tracking-widest bg-black text-white dark:bg-white dark:text-black">
+                    <span className="text-[7px] px-0.5 font-bold uppercase tracking-wider bg-black/10 text-black/50 dark:bg-white/10 dark:text-white/50">
                       {token.badge}
                     </span>
                   </div>
-                  <p className="text-[10px] font-bold opacity-40 dark:opacity-70 uppercase tracking-widest dark:text-white">
-                    {token.symbol}
+                  <p className="text-[9px] font-medium opacity-40 dark:opacity-60 dark:text-white">
+                    {token.name}
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-bold text-sm dark:text-white">
+                <p className="font-bold text-[12px] dark:text-white">
                   {token.loading ? '…' : hide(parseFloat(token.balance).toFixed(4))}
                 </p>
-                <p className="text-[10px] font-bold opacity-40 dark:opacity-70 dark:text-white">
+                <p className="text-[9px] font-bold opacity-40 dark:opacity-60 dark:text-white">
                   {token.loading
                     ? '—'
                     : hide(
@@ -305,20 +286,20 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
       </div>
 
       {/* ─── Recent Activity ─── */}
-      <div className="space-y-6">
+      <div className="space-y-3">
         <div className="flex justify-between items-center">
-          <h3 className="text-xs font-black tracking-widest uppercase dark:text-white">Recent Activity</h3>
+          <h3 className="text-[10px] font-black tracking-widest uppercase dark:text-white">Recent Activity</h3>
           <button
             onClick={onSeeAllActivity}
-            className="text-[10px] font-black uppercase tracking-widest text-black/40 dark:text-white/70 hover:text-black dark:hover:text-white"
+            className="text-[9px] font-black uppercase tracking-widest text-black/40 dark:text-white/70 hover:text-black dark:hover:text-white"
           >
             See all
           </button>
         </div>
-        <div className="border-2 border-black dark:border-white divide-y-2 divide-black dark:divide-white bg-white dark:bg-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
+        <div className="border-2 border-black dark:border-white divide-y divide-black/10 dark:divide-white/10 bg-white dark:bg-black overflow-hidden">
           {recentActivity.length === 0 ? (
-            <div className="p-6 text-center">
-              <p className="text-[10px] font-black uppercase tracking-widest opacity-30 dark:text-white">
+            <div className="p-4 text-center">
+              <p className="text-[9px] font-bold uppercase tracking-widest opacity-30 dark:text-white">
                 No transactions yet — start by staking, swapping, or supplying
               </p>
             </div>
@@ -326,28 +307,28 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, onEarnYield, onSee
             recentActivity.slice(0, 3).map((activity) => (
             <div
               key={activity.id}
-              className="p-4 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+              className="px-3 py-2.5 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <div
-                  className="w-8 h-8 flex items-center justify-center border-2 border-black dark:border-white bg-black text-white dark:bg-white dark:text-black"
+                  className="w-7 h-7 flex items-center justify-center border border-black/20 dark:border-white/20 bg-black text-white dark:bg-white dark:text-black"
                 >
                   {getActivityIcon(activity.type)}
                 </div>
                 <div>
-                  <p className="text-[11px] font-black uppercase tracking-tight dark:text-white">
+                  <p className="text-[10px] font-black uppercase tracking-tight dark:text-white">
                     {activity.type}
                   </p>
-                  <p className="text-[9px] font-bold text-black/30 dark:text-white/60 uppercase tracking-widest">
+                  <p className="text-[8px] font-medium text-black/30 dark:text-white/50">
                     {activity.label}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-1">
-                  <CheckCircle2 size={10} className="text-green-600" />
-                  <span className="text-[9px] font-black text-green-600 uppercase tracking-widest">
-                    Confirmed
+                  <CheckCircle2 size={8} className="text-green-600" />
+                  <span className="text-[8px] font-bold text-green-600 uppercase">
+                    OK
                   </span>
                 </div>
               </div>
