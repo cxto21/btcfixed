@@ -26,7 +26,9 @@ function PrivyLogoutBridge() {
 // Inner shell – rendered only when wallet is connected
 const AppShell: React.FC = () => {
   const { isConnected } = useAuth();
-  const [showSplash, setShowSplash] = useState(true);
+  // Skip splash if user has a saved session (returning user)
+  const hasSavedSession = !!localStorage.getItem('btcfixed_wallet_v1');
+  const [showSplash, setShowSplash] = useState(!hasSavedSession);
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [isPrivacyMode, setIsPrivacyMode] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);

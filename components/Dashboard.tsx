@@ -19,6 +19,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
+import { Wallet as WalletIcon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../contexts/AuthContext';
 import { useBalance } from '../hooks/useBalance';
@@ -48,6 +49,8 @@ interface DashboardProps {
 /* ─── Receive Modal ─── */
 const ReceiveModal: React.FC<{ address: string; onClose: () => void }> = ({ address, onClose }) => {
   const [copied, setCopied] = useState(false);
+  const isBlockchainAddress = !address.startsWith('did:');
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(address);
     setCopied(true);
@@ -63,25 +66,42 @@ const ReceiveModal: React.FC<{ address: string; onClose: () => void }> = ({ addr
             <X size={18} className="text-gray-400" />
           </button>
         </div>
-        <div className="flex justify-center">
-          <div className="bg-white p-4 rounded-2xl">
-            <QRCodeSVG value={address} size={200} level="M" />
+
+        {isBlockchainAddress ? (
+          <>
+            <div className="flex justify-center">
+              <div className="bg-white p-4 rounded-2xl">
+                <QRCodeSVG value={address} size={200} level="M" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-gray-400 text-center">Your Starknet Address</p>
+              <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
+                <p className="text-xs font-mono text-gray-600 dark:text-gray-300 break-all text-center leading-relaxed">
+                  {address}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleCopy}
+              className="w-full h-12 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-semibold text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
+            >
+              {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy Address</>}
+            </button>
+          </>
+        ) : (
+          <div className="text-center space-y-4 py-4">
+            <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mx-auto">
+              <WalletIcon size={28} className="text-[#F7931A]" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-base font-semibold dark:text-white">No Wallet Connected</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                You are logged in with email. To receive crypto, connect a Starknet wallet like Argent X or Braavos.
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-400 text-center">Your Starknet Address</p>
-          <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
-            <p className="text-xs font-mono text-gray-600 dark:text-gray-300 break-all text-center leading-relaxed">
-              {address}
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={handleCopy}
-          className="w-full h-12 rounded-2xl bg-black dark:bg-white text-white dark:text-black font-semibold text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
-        >
-          {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy Address</>}
-        </button>
+        )}
       </div>
     </div>
   );
