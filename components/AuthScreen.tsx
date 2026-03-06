@@ -111,16 +111,26 @@ const AuthScreen: React.FC = () => {
   // When Privy authenticates, sync address into our AuthContext
   useEffect(() => {
     if (!privy.authenticated || !privy.user) return;
-    // Extract wallet address from Privy user — check linked accounts for any wallet
-    const user = privy.user as Record<string, unknown>;
+    const user = privy.user as unknown as Record<string, unknown>;
+
+    // Extract a human-readable display name from Privy user
+    const email = user.email as { address?: string } | undefined;
+    const google = user.google as { email?: string; name?: string } | undefined;
+    const twitter = user.twitter as { username?: string } | undefined;
+    const apple = user.apple as { email?: string } | undefined;
+    const displayName =
+      google?.name ??
+      google?.email ??
+      email?.address ??
+      twitter?.username ??
+      apple?.email ??
+      null;
+
+    // Try to get an embedded wallet address (EVM)
     const wallet = user.wallet as { address?: string } | undefined;
-    if (wallet?.address) {
-      connectWithAddress('privy', wallet.address);
-    } else {
-      // Use Privy user ID as a placeholder address for non-wallet Privy logins
-      const userId = (user.id as string) ?? 'privy-user';
-      connectWithAddress('privy', userId);
-    }
+    const address = wallet?.address ?? (user.id as string) ?? 'privy-user';
+
+    connectWithAddress('privy', address, displayName ?? undefined);
   }, [privy.authenticated, privy.user, connectWithAddress]);
 
   // Detect injected wallets after a short delay so extensions can inject

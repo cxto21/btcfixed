@@ -19,12 +19,15 @@ const Header: React.FC<HeaderProps> = ({
   isDarkMode,
   setIsDarkMode,
 }) => {
-  const { address, disconnect } = useAuth();
+  const { address, displayName, disconnect } = useAuth();
   const [copied, setCopied] = useState(false);
+
+  // Only show address chip for real blockchain addresses, not Privy DIDs
+  const isValidAddress = address && !address.startsWith('did:');
 
   const getTitle = () => {
     switch (activeTab) {
-      case 'dashboard': return address ? truncateAddress(address) : 'Home';
+      case 'dashboard': return displayName ?? (address ? truncateAddress(address) : 'Home');
       case 'bridge':    return 'Swap';
       case 'staking':   return 'Earn';
       case 'lending':   return 'Vault';
@@ -53,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({
             <h1 className="text-lg font-bold tracking-tight dark:text-white leading-tight">
               {getTitle()}
             </h1>
-            {address && (
+            {isValidAddress && (
               <button
                 onClick={handleCopyAddress}
                 className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"

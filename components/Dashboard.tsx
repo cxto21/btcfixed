@@ -93,18 +93,22 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
   const [showReceiveModal, setShowReceiveModal] = useState(false);
   const recentActivity = useActivity();
 
+  // Only use address for on-chain operations if it's a real blockchain address
+  const isValidAddress = address && !address.startsWith('did:');
+  const onChainAddress = isValidAddress ? address : null;
+
   const { balance: ethBalance, isLoading: ethLoading, refetch: refetchEth } = useBalance(
-    address,
+    onChainAddress,
     ACTIVE_TOKENS.ETH,
     15_000,
   );
   const { balance: strkBalance, isLoading: strkLoading, refetch: refetchStrk } = useBalance(
-    address,
+    onChainAddress,
     ACTIVE_TOKENS.STRK,
     15_000,
   );
   const { balance: wbtcBalance, isLoading: wbtcLoading, refetch: refetchWbtc } = useBalance(
-    address,
+    onChainAddress,
     ACTIVE_TOKENS.WBTC,
     15_000,
   );
@@ -201,7 +205,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
       <div className="flex justify-center gap-6">
         {[
           { icon: Send, label: 'Swap', action: () => onEarnYield('0') },
-          { icon: Download, label: 'Receive', action: () => setShowReceiveModal(true) },
+          { icon: Download, label: 'Receive', action: () => isValidAddress && setShowReceiveModal(true) },
           { icon: TrendingUp, label: 'Earn', action: () => onEarnYield(ethBalance.formatted) },
           { icon: RefreshCw, label: 'Refresh', action: () => { refetchEth(); refetchStrk(); refetchWbtc(); } },
         ].map((action) => (
@@ -339,7 +343,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
       </div>
 
       {/* ─── Receive Modal ─── */}
-      {showReceiveModal && address && (
+      {showReceiveModal && isValidAddress && address && (
         <ReceiveModal address={address} onClose={() => setShowReceiveModal(false)} />
       )}
     </div>
