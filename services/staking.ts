@@ -8,7 +8,7 @@
  *  - Read-only ops: use a minimal WalletInterface adapter (address + callContract)
  *  - Write ops: use staking.populate*() to get Call[] → execute via connected wallet
  */
-import { Staking, Amount, mainnetValidators, getStakingPreset } from 'starkzap';
+import { Staking, Amount, mainnetValidators, getStakingPreset, ChainId } from 'starkzap';
 import type { WalletInterface, PoolMember } from 'starkzap';
 import type { Call, RpcProvider } from 'starknet';
 import { getSDK } from './sdk';
@@ -61,7 +61,7 @@ export async function getStakingForValidator(key: ValidatorKey): Promise<Staking
   const validator = mainnetValidators[key];
   const strkToken = await getStrkToken();
   const provider = sdk.getProvider();
-  const stakingConfig = getStakingPreset('SN_MAIN');
+  const stakingConfig = getStakingPreset(ChainId.MAINNET);
 
   const staking = await Staking.fromStaker(
     validator.stakerAddress,

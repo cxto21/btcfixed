@@ -15,7 +15,6 @@ import {
   type WalletInfo,
 } from '../config/wallets';
 import { ACTIVE_NETWORK } from '../config/networks';
-import { ResponseCodes } from '@cartridge/controller';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -74,13 +73,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!silent) setState((s) => ({ ...s, isLoading: true, error: null }));
     try {
       const connector = getCartridgeConnector();
-      const reply = await connector.connect();
+      // connect() returns the account object directly on success, or throws on failure/cancel
+      const account = await connector.connect();
 
-      if (reply.code !== ResponseCodes.SUCCESS) {
-        throw new Error((reply as { message?: string }).message ?? 'Cartridge: connection cancelled');
-      }
+      if (!account) throw new Error('Cartridge: connection cancelled');
 
-      const address = (reply as { address: string }).address;
+      // The account address is available as account.address
+      const address = (account as unknown as { address: string }).address;
       if (!address) throw new Error('Cartridge: could not retrieve address');
 
       setState({

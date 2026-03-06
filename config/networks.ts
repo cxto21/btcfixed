@@ -4,7 +4,7 @@ export const NETWORKS = {
     chainId: '0x534e5f5345504f4c4941',
     rpcUrl:
       (import.meta.env.VITE_STARKNET_RPC_URL as string) ||
-      'https://free-rpc.nethermind.io/sepolia-juno/',
+      'https://api.cartridge.gg/x/starknet/sepolia',
     explorerUrl: 'https://sepolia.starkscan.co',
     isTestnet: true,
   },
@@ -13,7 +13,7 @@ export const NETWORKS = {
     chainId: '0x534e5f4d41494e',
     rpcUrl:
       (import.meta.env.VITE_STARKNET_RPC_URL as string) ||
-      'https://free-rpc.nethermind.io/mainnet-juno/',
+      'https://api.cartridge.gg/x/starknet/mainnet',
     explorerUrl: 'https://starkscan.co',
     isTestnet: false,
   },
