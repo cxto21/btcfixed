@@ -205,7 +205,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
       <div className="flex justify-center gap-6">
         {[
           { icon: Send, label: 'Swap', action: () => onEarnYield('0') },
-          { icon: Download, label: 'Receive', action: () => isValidAddress && setShowReceiveModal(true) },
+          { icon: Download, label: 'Receive', action: () => address && setShowReceiveModal(true) },
           { icon: TrendingUp, label: 'Earn', action: () => onEarnYield(ethBalance.formatted) },
           { icon: RefreshCw, label: 'Refresh', action: () => { refetchEth(); refetchStrk(); refetchWbtc(); } },
         ].map((action) => (
@@ -234,7 +234,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="w-12 h-8">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
               <AreaChart data={chartData}>
                 <XAxis dataKey="name" hide />
                 <Area
@@ -343,7 +343,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
       </div>
 
       {/* ─── Receive Modal ─── */}
-      {showReceiveModal && isValidAddress && address && (
+      {showReceiveModal && address && (
         <ReceiveModal address={address} onClose={() => setShowReceiveModal(false)} />
       )}
     </div>
