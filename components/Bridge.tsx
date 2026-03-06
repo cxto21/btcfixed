@@ -1,5 +1,5 @@
 /**
- * Bridge (Swap Terminal) — Session 3
+ * Bridge (Swap) — Session 3
  *
  * Real token swaps via AVNU DEX aggregator.
  * Provides real-time quotes, slippage info, and on-chain execution.
@@ -14,6 +14,7 @@ import {
   ExternalLink,
   ChevronDown,
   ArrowUpDown,
+  Info,
 } from 'lucide-react';
 import { useSwap } from '../hooks/useSwap';
 import { useBalance } from '../hooks/useBalance';
@@ -22,16 +23,8 @@ import { ACTIVE_TOKENS, type TokenConfig } from '../config/tokens';
 import { SWAP_TOKENS, type SwapTokenSymbol } from '../services/swap';
 import { ACTIVE_NETWORK_CONFIG } from '../config/networks';
 
-// ---------------------------------------------------------------------------
-// Token selector dropdown
-// ---------------------------------------------------------------------------
-
-const TOKEN_EMOJI: Record<string, string> = {
-  ETH: '⟠',
-  STRK: '✦',
-  USDC: '$',
-  USDT: '₮',
-  WBTC: '₿',
+const TOKEN_COLORS: Record<string, string> = {
+  ETH: '#627EEA', STRK: '#8B5CF6', USDC: '#2775CA', USDT: '#26A17B', WBTC: '#F7931A',
 };
 
 function TokenSelector({
@@ -49,17 +42,19 @@ function TokenSelector({
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 border-2 border-black dark:border-white px-3 py-2 bg-white dark:bg-black hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+        className="flex items-center gap-2 bg-gray-100 dark:bg-white/10 px-3 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-white/15 transition-colors"
       >
-        <span className="text-base font-black dark:text-white">{TOKEN_EMOJI[selected.symbol] ?? '◈'}</span>
-        <span className="text-sm font-black dark:text-white">{selected.symbol}</span>
-        <ChevronDown size={12} className="dark:text-white" />
+        <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: TOKEN_COLORS[selected.symbol] ?? '#888' }}>
+          {selected.symbol[0]}
+        </div>
+        <span className="text-sm font-semibold dark:text-white">{selected.symbol}</span>
+        <ChevronDown size={14} className="text-gray-400" />
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-20 bg-white dark:bg-black border-2 border-black dark:border-white shadow-[4px_4px_0_rgba(0,0,0,1)] min-w-[120px]">
+          <div className="absolute right-0 top-full mt-2 z-20 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-xl shadow-xl min-w-[140px] overflow-hidden">
             {SWAP_TOKENS.map((sym) => {
               const token = ACTIVE_TOKENS[sym as SwapTokenSymbol];
               if (!token) return null;
@@ -69,14 +64,16 @@ function TokenSelector({
                   key={sym}
                   onClick={() => { if (!isDisabled) { onSelect(token); setOpen(false); } }}
                   disabled={isDisabled}
-                  className={`w-full flex items-center gap-2 px-4 py-2.5 text-xs font-black tracking-widest transition-colors ${
+                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors ${
                     isDisabled
-                      ? 'opacity-30 cursor-not-allowed dark:text-white'
-                      : 'hover:bg-zinc-50 dark:hover:bg-zinc-800 dark:text-white'
-                  } ${sym === selected.symbol ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+                      ? 'opacity-30 cursor-not-allowed'
+                      : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                  } ${sym === selected.symbol ? 'bg-gray-50 dark:bg-white/5' : ''}`}
                 >
-                  <span>{TOKEN_EMOJI[sym] ?? '◈'}</span>
-                  <span>{sym}</span>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: TOKEN_COLORS[sym] ?? '#888' }}>
+                    {sym[0]}
+                  </div>
+                  <span className="font-medium dark:text-white">{sym}</span>
                 </button>
               );
             })}
@@ -87,28 +84,11 @@ function TokenSelector({
   );
 }
 
-// ---------------------------------------------------------------------------
-// Route badge
-// ---------------------------------------------------------------------------
-
-function RouteBadge({ label }: { label: string }) {
-  return (
-    <div className="px-2 py-0.5 bg-black dark:bg-white text-white dark:text-black text-[8px] font-black tracking-widest uppercase">
-      {label}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Bridge component
-// ---------------------------------------------------------------------------
-
 const Bridge: React.FC = () => {
   const { address } = useAuth();
   const swap = useSwap();
 
-  // Balance of sell token
-  const balance = useBalance(address, swap.sellToken, 20_000);
+  const { balance } = useBalance(address, swap.sellToken, 20_000);
   const balanceFormatted = balance?.formatted ?? '0';
 
   const isQuoting = swap.status === 'quoting';
@@ -128,153 +108,117 @@ const Bridge: React.FC = () => {
     : null;
 
   return (
-    <div className="space-y-10 animate-modern">
-      <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <h2 className="text-4xl font-bold tracking-tighter uppercase dark:text-white">SWAP TERMINAL</h2>
-          <span className="px-2 py-0.5 border-2 border-[#F7931A] text-[#F7931A] text-[8px] font-black uppercase tracking-widest">MAINNET</span>
-        </div>
-        <p className="text-black/40 dark:text-white/70 text-sm font-medium uppercase tracking-widest">
-          Instant Liquidity · AVNU DEX Aggregator · Starknet Mainnet
-        </p>
-      </div>
-
-      {/* Swap card */}
-      <div className="space-y-[2px] bg-black dark:bg-white border-2 border-black dark:border-white overflow-visible">
-        <div className="p-8 bg-white dark:bg-black space-y-6">
-
-          {/* SELL */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 dark:opacity-70 dark:text-white">
-                Sell
-              </p>
-              {address && (
-                <button
-                  onClick={() => swap.setSellAmount(balanceFormatted)}
-                  className="text-[9px] font-black opacity-40 dark:opacity-60 dark:text-white hover:opacity-100 transition-opacity uppercase tracking-widest"
-                >
-                  Balance: {balanceFormatted} {swap.sellToken.symbol}
-                </button>
-              )}
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <input
-                type="number"
-                placeholder="0.00"
-                value={swap.sellAmount}
-                onChange={(e) => swap.setSellAmount(e.target.value)}
-                min="0"
-                className="text-4xl font-bold bg-transparent outline-none w-full tracking-tighter dark:text-white"
-              />
-              <TokenSelector
-                selected={swap.sellToken}
-                onSelect={swap.setSellToken}
-                disabledSymbol={swap.buyToken.symbol}
-              />
-            </div>
-          </div>
-
-          {/* Flip button */}
-          <div className="flex justify-center -my-1 relative z-10">
-            <button
-              onClick={swap.flipTokens}
-              disabled={isPending}
-              className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black flex items-center justify-center border-4 border-white dark:border-black transition-transform hover:scale-110 active:scale-95 disabled:opacity-40"
-            >
-              <ArrowUpDown size={20} strokeWidth={3} />
-            </button>
-          </div>
-
-          {/* BUY */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30 dark:opacity-70 dark:text-white">
-                Receive (estimated)
-              </p>
-              {isGasless && <RouteBadge label="Gasless" />}
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              {isQuoting ? (
-                <Loader2 size={28} className="animate-spin dark:text-white opacity-40" />
-              ) : (
-                <span className={`text-4xl font-bold tracking-tighter ${swap.buyAmount ? 'dark:text-white' : 'opacity-30 dark:opacity-40 dark:text-white'}`}>
-                  {swap.buyAmount || '0.00'}
-                </span>
-              )}
-              <TokenSelector
-                selected={swap.buyToken}
-                onSelect={swap.setBuyToken}
-                disabledSymbol={swap.sellToken.symbol}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Status bar */}
-        <div className={`p-4 flex items-center gap-3 transition-colors ${
-          isPending
-            ? 'bg-yellow-400 text-black'
-            : isSuccess
-            ? 'bg-green-700 text-white'
-            : isError
-            ? 'bg-red-700 text-white'
-            : 'bg-black dark:bg-white text-white dark:text-black'
+    <div className="space-y-5 animate-modern">
+      {/* Status banner */}
+      {(isPending || isSuccess || isError) && (
+        <div className={`rounded-2xl p-4 flex items-center gap-3 ${
+          isPending ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400'
+          : isSuccess ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+          : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
         }`}>
-          {isPending && <><Loader2 size={16} className="animate-spin shrink-0" /><span className="text-[10px] font-black uppercase tracking-widest">Executing swap on Starknet…</span></>}
+          {isPending && <><Loader2 size={16} className="animate-spin shrink-0" /><span className="text-sm font-medium">Executing swap...</span></>}
           {isSuccess && explorerLink && (
             <>
               <CheckCircle2 size={16} className="shrink-0" />
-              <span className="text-[10px] font-black uppercase tracking-widest flex-1">Swap completed!</span>
-              <a href={explorerLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-black underline">
-                View <ExternalLink size={11} />
+              <span className="text-sm font-medium flex-1">Swap completed!</span>
+              <a href={explorerLink} target="_blank" rel="noopener noreferrer" className="text-sm font-medium underline flex items-center gap-1">
+                View <ExternalLink size={12} />
               </a>
             </>
           )}
-          {isError && (
-            <>
-              <AlertTriangle size={16} className="shrink-0" />
-              <span className="text-[10px] font-black uppercase tracking-widest truncate">{swap.error ?? 'Error'}</span>
-            </>
-          )}
-          {!isPending && !isSuccess && !isError && (
-            <>
-              <Zap size={16} className="text-[#F7931A]" />
-              <span className="text-[10px] font-black uppercase tracking-widest">
-                {isQuoting ? 'Finding best route…' : isReady && routeName ? `Route: ${routeName}` : 'Powered by AVNU'}
+          {isError && <><AlertTriangle size={16} className="shrink-0" /><span className="text-sm font-medium truncate">{swap.error ?? 'Error'}</span></>}
+        </div>
+      )}
+
+      {/* Swap card */}
+      <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 space-y-4">
+        {/* SELL */}
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl p-4 space-y-3">
+          <div className="flex justify-between items-center">
+            <p className="text-xs font-medium text-gray-400">You pay</p>
+            {address && (
+              <button
+                onClick={() => swap.setSellAmount(balanceFormatted)}
+                className="text-xs text-[#F7931A] font-medium hover:underline"
+              >
+                Balance: {parseFloat(balanceFormatted).toFixed(4)}
+              </button>
+            )}
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <input
+              type="number"
+              placeholder="0.00"
+              value={swap.sellAmount}
+              onChange={(e) => swap.setSellAmount(e.target.value)}
+              min="0"
+              className="text-3xl font-bold bg-transparent outline-none w-full dark:text-white placeholder:text-gray-300 dark:placeholder:text-gray-600"
+            />
+            <TokenSelector
+              selected={swap.sellToken}
+              onSelect={swap.setSellToken}
+              disabledSymbol={swap.buyToken.symbol}
+            />
+          </div>
+        </div>
+
+        {/* Flip */}
+        <div className="flex justify-center -my-1 relative z-10">
+          <button
+            onClick={swap.flipTokens}
+            disabled={isPending}
+            className="w-10 h-10 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-xl flex items-center justify-center shadow-sm hover:shadow transition-all hover:scale-105 active:scale-95 disabled:opacity-40"
+          >
+            <ArrowUpDown size={18} className="text-gray-500 dark:text-gray-400" />
+          </button>
+        </div>
+
+        {/* BUY */}
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl p-4 space-y-3">
+          <div className="flex justify-between items-center">
+            <p className="text-xs font-medium text-gray-400">You receive</p>
+            <div className="flex items-center gap-2">
+              {isGasless && (
+                <span className="text-[10px] font-medium text-green-500 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Gasless</span>
+              )}
+              {routeName && isReady && (
+                <span className="text-[10px] font-medium text-gray-400 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">via {routeName}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            {isQuoting ? (
+              <Loader2 size={24} className="animate-spin text-gray-300" />
+            ) : (
+              <span className={`text-3xl font-bold ${swap.buyAmount ? 'dark:text-white' : 'text-gray-300 dark:text-gray-600'}`}>
+                {swap.buyAmount || '0.00'}
               </span>
-            </>
-          )}
+            )}
+            <TokenSelector
+              selected={swap.buyToken}
+              onSelect={swap.setBuyToken}
+              disabledSymbol={swap.sellToken.symbol}
+            />
+          </div>
         </div>
       </div>
 
       {/* Quote details */}
       {isReady && swap.quote && (
-        <div className="bg-zinc-50 dark:bg-zinc-900 border border-black/10 dark:border-white/20 p-4 space-y-2 font-mono">
-          <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-            <span className="opacity-40 dark:opacity-70">EXCHANGE RATE:</span>
-            <span>
-              1 {swap.sellToken.symbol} ≈{' '}
-              {(parseFloat(swap.buyAmount) / parseFloat(swap.sellAmount)).toFixed(4)}{' '}
-              {swap.buyToken.symbol}
-            </span>
-          </div>
-          <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-            <span className="opacity-40 dark:opacity-70">ROUTE:</span>
-            <span>{routeName || 'AVNU'}</span>
-          </div>
-          {swap.priceImpact && (
-            <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-              <span className="opacity-40 dark:opacity-70">PRICE IMPACT:</span>
-              <span className={parseFloat(swap.priceImpact) > 1 ? 'text-red-500' : 'text-green-600'}>
-                ~{swap.priceImpact}
+        <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4 space-y-2.5">
+          {[
+            { label: 'Rate', value: `1 ${swap.sellToken.symbol} ≈ ${(parseFloat(swap.buyAmount) / parseFloat(swap.sellAmount)).toFixed(4)} ${swap.buyToken.symbol}` },
+            { label: 'Route', value: routeName || 'AVNU' },
+            ...(swap.priceImpact ? [{ label: 'Price impact', value: `~${swap.priceImpact}`, warn: parseFloat(swap.priceImpact) > 1 }] : []),
+            { label: 'Slippage', value: '0.5%' },
+          ].map((row) => (
+            <div key={row.label} className="flex justify-between items-center">
+              <span className="text-xs text-gray-400">{row.label}</span>
+              <span className={`text-xs font-medium ${'warn' in row && row.warn ? 'text-red-500' : 'dark:text-white'}`}>
+                {row.value}
               </span>
             </div>
-          )}
-          <div className="flex justify-between items-center text-[9px] font-bold dark:text-white">
-            <span className="opacity-40 dark:opacity-70">SLIPPAGE:</span>
-            <span>0.5%</span>
-          </div>
+          ))}
         </div>
       )}
 
@@ -282,32 +226,29 @@ const Bridge: React.FC = () => {
       <button
         onClick={isSuccess || isError ? swap.resetStatus : swap.executeSwap}
         disabled={isPending || isQuoting || (!isReady && !isSuccess && !isError) || !address}
-        className="w-full h-16 bg-black dark:bg-white text-white dark:text-black text-base font-bold tracking-[0.2em] flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed uppercase transition-opacity"
+        className="w-full h-14 rounded-2xl bg-black dark:bg-white text-white dark:text-black text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:opacity-90"
       >
         {isPending ? (
-          <><Loader2 size={20} className="animate-spin" /> Processing…</>
+          <><Loader2 size={18} className="animate-spin" /> Processing...</>
         ) : isSuccess ? (
-          <><CheckCircle2 size={20} /> New Swap</>
+          <><CheckCircle2 size={18} /> New Swap</>
         ) : isError ? (
-          <><RefreshCw size={20} /> Retry</>
+          <><RefreshCw size={18} /> Retry</>
         ) : isQuoting ? (
-          <><Loader2 size={20} className="animate-spin" /> Quoting…</>
+          <><Loader2 size={18} className="animate-spin" /> Quoting...</>
         ) : !address ? (
-          'Connect your wallet'
+          'Connect wallet'
         ) : (
-          <><Zap size={20} /> Execute Swap</>
+          <><Zap size={18} /> Swap</>
         )}
       </button>
 
-      {/* Info */}
-      <div className="flex items-start gap-4 p-5 border-2 border-black dark:border-white bg-muted/50 dark:bg-zinc-900/50">
-        <ArrowUpDown size={20} className="mt-1 shrink-0 dark:text-white" strokeWidth={3} />
-        <div>
-          <p className="text-xs font-black uppercase tracking-widest mb-1 dark:text-white">DEX Aggregator · Mainnet</p>
-          <p className="text-[11px] text-black/60 dark:text-white/80 leading-relaxed font-medium">
-            Swaps are executed by <strong>AVNU</strong>, Starknet’s leading liquidity aggregator. The best available route is always selected across multiple DEXs on <strong>Starknet Mainnet</strong>.
-          </p>
-        </div>
+      {/* Info footer */}
+      <div className="flex items-start gap-3 bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
+        <Info size={16} className="mt-0.5 shrink-0 text-gray-400" />
+        <p className="text-xs text-gray-400 leading-relaxed">
+          Swaps powered by <strong className="text-gray-600 dark:text-gray-300">AVNU</strong>, Starknet's leading DEX aggregator. Best route automatically selected.
+        </p>
       </div>
     </div>
   );
