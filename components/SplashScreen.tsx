@@ -59,9 +59,9 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   const activeFeature = FEATURES[current];
 
   return (
-    <div className="fixed inset-0 bg-[#f2f2f2] z-[100] flex justify-center overflow-hidden selection:bg-black selection:text-white">
+    <div className="fixed inset-0 bg-[#111] z-[100] flex justify-center overflow-hidden selection:bg-white selection:text-black">
       {/* Mobile-constrained container */}
-      <div className="w-full max-w-md bg-white relative flex flex-col shadow-2xl">
+      <div className="w-full max-w-md bg-[#111] relative flex flex-col shadow-2xl">
         
         {/* Background Decor - Official Logo as watermark, top-right, smaller, 35% opacity */}
         <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
@@ -79,13 +79,13 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
               alt="BTC" 
               className="w-10 h-10"
             />
-            <span className="text-2xl font-black tracking-tight text-black">
+            <span className="text-2xl font-black tracking-tight text-white">
               BTC<span className="font-medium">Fixed</span>
             </span>
           </div>
           <button 
             onClick={onFinish}
-            className="text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-black transition-colors"
+            className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"
           >
             Skip
           </button>
@@ -95,18 +95,18 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           <div className="space-y-8">
             <div className="flex items-center gap-4">
               <div className="h-[2px] w-12 bg-[#F7931A]" />
-              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-black/40">
+              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-white/40">
                 {activeFeature.label}
               </span>
             </div>
 
             <div className="relative">
-              <h2 className="text-[52px] font-bold leading-[0.9] tracking-tighter text-black whitespace-pre-line mb-8 drop-shadow-sm">
+              <h2 className="text-[52px] font-bold leading-[0.9] tracking-tighter text-white whitespace-pre-line mb-8 drop-shadow-sm">
                 {activeFeature.title}
               </h2>
             </div>
 
-            <p className="text-xl font-medium text-black leading-[1.2] max-w-[300px]">
+            <p className="text-xl font-medium text-white leading-[1.2] max-w-[300px]">
               {activeFeature.desc}
             </p>
           </div>
@@ -117,7 +117,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
             {FEATURES.map((_, i) => (
               <div 
                 key={i} 
-                className={`transition-all duration-700 ${i === current ? 'w-12 bg-[#F7931A] h-2' : 'w-2 bg-black/10 h-2'}`}
+                className={`transition-all duration-700 ${i === current ? 'w-12 bg-[#F7931A] h-2' : 'w-2 bg-white/10 h-2'}`}
               />
             ))}
           </div>
@@ -131,8 +131,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
               <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
             </button>
             
-            <div className="w-20 h-20 border-2 border-black flex items-center justify-center bg-white/50 backdrop-blur-sm">
-              <span className="text-sm font-black italic">0{current + 1}</span>
+            <div className="w-20 h-20 border-2 border-white flex items-center justify-center bg-white/10 backdrop-blur-sm">
+              <span className="text-sm font-black italic text-white">0{current + 1}</span>
             </div>
           </div>
         </div>

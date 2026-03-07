@@ -28,6 +28,9 @@ root.render(
           logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png',
         },
         loginMethods: ['email', 'google', 'twitter', 'github', 'apple'],
+        embeddedWallets: {
+          ethereum: { createOnLogin: 'all-users' },
+        },
       }}
     >
       {appContent}

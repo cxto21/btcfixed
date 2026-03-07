@@ -31,7 +31,7 @@ const CartridgeIcon = () => (
 );
 
 const WalletIcon = () => (
-  <Wallet size={24} className="text-black" />
+  <Wallet size={24} className="text-white" />
 );
 
 function WalletButton({
@@ -91,7 +91,7 @@ function InstallLink({ wallet }: { wallet: WalletInfo }) {
       href={wallet.installUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-full h-14 border-2 border-black/20 flex items-center justify-between px-6 font-bold tracking-tighter text-black/40 hover:border-black hover:text-black transition-colors"
+      className="w-full h-14 border-2 border-white/20 flex items-center justify-between px-6 font-bold tracking-tighter text-white/40 hover:border-white hover:text-white transition-colors"
     >
       <span className="text-sm uppercase">{wallet.name} — Install</span>
       <ExternalLink size={16} />
@@ -126,9 +126,17 @@ const AuthScreen: React.FC = () => {
       apple?.email ??
       null;
 
-    // Try to get an embedded wallet address (EVM)
+    // Try to find a Starknet embedded wallet from linkedAccounts
+    const linkedAccounts = (user as unknown as { linkedAccounts?: Array<{ type: string; chainType?: string; address?: string }> }).linkedAccounts;
+    const starknetWallet = linkedAccounts?.find(
+      (a) => a.type === 'wallet' && a.chainType === 'starknet' && a.address,
+    );
+    // Fallback: any embedded wallet (EVM), then user.wallet, then DID
+    const embeddedWallet = linkedAccounts?.find(
+      (a) => a.type === 'wallet' && a.address,
+    );
     const wallet = user.wallet as { address?: string } | undefined;
-    const address = wallet?.address ?? (user.id as string) ?? 'privy-user';
+    const address = starknetWallet?.address ?? embeddedWallet?.address ?? wallet?.address ?? (user.id as string);
 
     connectWithAddress('privy', address, displayName ?? undefined);
   }, [privy.authenticated, privy.user, connectWithAddress]);
@@ -156,7 +164,7 @@ const AuthScreen: React.FC = () => {
   ).map((id) => WALLET_METADATA[id]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col px-10 pt-24 pb-12 max-w-md mx-auto overflow-hidden relative">
+    <div className="min-h-screen bg-[#111] flex flex-col px-10 pt-24 pb-12 max-w-md mx-auto overflow-hidden relative">
       {/* Background BTC watermark */}
       <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
         <img
@@ -193,14 +201,14 @@ const AuthScreen: React.FC = () => {
 
         <div className="h-2 w-20 bg-[#F7931A] mb-8" />
 
-        <p className="text-black/60 font-medium text-xl leading-tight max-w-[280px]">
+        <p className="text-white/60 font-medium text-xl leading-tight max-w-[280px]">
           Smart HODLing.<br />Borrow, don't sell your cheap coins.
         </p>
       </div>
 
       {/* Wallet connection section */}
       <div className="mt-auto space-y-3 animate-modern" style={{ animationDelay: '0.1s' }}>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/30 mb-4">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 mb-4">
           Connect your Starknet wallet
         </p>
 
@@ -238,9 +246,9 @@ const AuthScreen: React.FC = () => {
         {/* Separator */}
         {(detected.length > 0 || notInstalled.length > 0) && (
           <div className="flex items-center gap-3 py-1">
-            <div className="flex-1 h-px bg-black/10" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-black/30">or extension wallet</span>
-            <div className="flex-1 h-px bg-black/10" />
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-white/30">or extension wallet</span>
+            <div className="flex-1 h-px bg-white/10" />
           </div>
         )}
 
@@ -261,7 +269,7 @@ const AuthScreen: React.FC = () => {
 
         {/* Error message */}
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 text-red-700 mt-2">
+          <div className="flex items-start gap-2 p-3 bg-red-900/30 border border-red-500/50 text-red-300 mt-2">
             <AlertCircle size={14} className="mt-0.5 shrink-0" />
             <p className="text-[11px] font-medium leading-relaxed">{error}</p>
           </div>
@@ -271,12 +279,12 @@ const AuthScreen: React.FC = () => {
         <div className="pt-8 flex flex-col gap-4">
           <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border-l-4 border-[#F7931A]">
             <Shield size={16} className="mt-1 shrink-0 text-[#F7931A]" />
-            <p className="text-[11px] text-black font-bold leading-relaxed">
+            <p className="text-[11px] text-white/80 font-bold leading-relaxed">
               Bitcoin DeFi on Starknet. No liquidations on fixed-rate vaults.
               Full transparency with on-chain proofs.
             </p>
           </div>
-          <p className="text-[10px] text-black/40 font-black uppercase tracking-[0.2em] text-center">
+          <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] text-center">
             Powered by Starknet · {ACTIVE_NETWORK.toUpperCase()}
           </p>
         </div>

@@ -24,7 +24,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       // Ensure starkzap tree-shakes server-only modules
-      external: [],
+      // MistCash SDK contains heavy ZK proof WASM — externalize to avoid OOM during build
+      external: ['@mistcash/sdk', '@mistcash/config', 'garaga'],
     },
   },
 });

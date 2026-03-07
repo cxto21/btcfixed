@@ -47,6 +47,6 @@ test.describe('Navigation', () => {
   test('can navigate to Identity tab', async ({ page }) => {
     await mockWalletLogin(page);
     await page.getByRole('navigation').getByRole('button', { name: 'ID' }).click();
-    await expect(page.getByText('Coming Soon')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('Anonymous Transactions')).toBeVisible({ timeout: 10_000 });
   });
 });

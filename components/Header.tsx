@@ -22,8 +22,7 @@ const Header: React.FC<HeaderProps> = ({
   const { address, displayName, disconnect } = useAuth();
   const [copied, setCopied] = useState(false);
 
-  // Only show address chip for real blockchain addresses, not Privy DIDs
-  const isValidAddress = address && !address.startsWith('did:');
+  const isValidAddress = !!address;
 
   const getTitle = () => {
     switch (activeTab) {

@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@cartridge/controller": "^0.13.9",
+    "@mistcash/config": "^0.5.2",
+    "@mistcash/sdk": "^0.5.2",
     "@privy-io/react-auth": "^3.16.0",
     "lucide-react": "^0.563.0",
     "qrcode.react": "^4.2.0",

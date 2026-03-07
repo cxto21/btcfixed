@@ -52,14 +52,15 @@ test.describe('Dashboard', () => {
     await expect(page.getByRole('button', { name: 'Copy Address' })).toBeVisible();
   });
 
-  test('Receive modal shows "No Wallet" for Privy DID users', async ({ page }) => {
+  test('Receive modal shows address for Privy embedded wallet users', async ({ page }) => {
     await mockWalletLogin(page, {
       walletId: 'privy',
-      address: 'did:privy:testuser123',
+      address: '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
       displayName: 'test@example.com',
     });
     await page.getByRole('main').getByRole('button', { name: 'Receive' }).click();
-    await expect(page.getByText('No Wallet Connected')).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText('Your Starknet Address')).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole('button', { name: 'Copy Address' })).toBeVisible();
   });
 
   test('Earn yield banner is visible', async ({ page }) => {
@@ -77,7 +78,7 @@ test.describe('Header', () => {
   test('shows displayName for Privy users', async ({ page }) => {
     await mockWalletLogin(page, {
       walletId: 'privy',
-      address: 'did:privy:testuser123',
+      address: '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
       displayName: 'test@example.com',
     });
     await expect(page.getByRole('heading', { name: 'test@example.com' })).toBeVisible({ timeout: 10_000 });

@@ -31,7 +31,7 @@ const AppShell: React.FC = () => {
   const [showSplash, setShowSplash] = useState(!hasSavedSession);
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [isPrivacyMode, setIsPrivacyMode] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [suggestedAmount, setSuggestedAmount] = useState<string | null>(null);
   const mainRef = useRef<HTMLElement>(null);
 

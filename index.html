@@ -47,6 +47,14 @@
     }
     ::-webkit-scrollbar { display: none; }
 
+    /* Light mode: override all gray/slate/zinc text shades to black */
+    body:not(.dark) [class*="text-gray-"],
+    body:not(.dark) [class*="text-slate-"],
+    body:not(.dark) [class*="text-zinc-"],
+    body:not(.dark) [class*="text-neutral-"] {
+      color: #000;
+    }
+
     /* Utility classes kept for backward compat with other pages */
     .neo-shadow { box-shadow: none; }
     .neo-shadow-orange { box-shadow: none; }
