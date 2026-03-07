@@ -63,7 +63,7 @@ const TxBanner: React.FC<TxBannerProps> = ({ txHash, status, error, onClose }) =
     </div>
     <button
       onClick={onClose}
-      className="text-xs font-medium text-gray-400 hover:text-gray-600 dark:hover:text-white"
+      className="text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
     >
       ✕
     </button>
@@ -88,7 +88,7 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({ assets, selected, onSelec
           {selected ? selected.symbol[0] : '?'}
         </div>
         <span className="text-sm font-semibold dark:text-white">{selected?.symbol ?? 'Select'}</span>
-        <ChevronDown size={14} className="text-gray-400" />
+        <ChevronDown size={14} className="text-gray-600 dark:text-gray-300" />
       </button>
       {open && (
         <>
@@ -160,7 +160,7 @@ const SupplyTab: React.FC<SupplyTabProps> = ({
       {/* Asset + Amount input */}
       <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-gray-400">Deposit</span>
+          <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Deposit</span>
           {balance?.formatted && (
             <button
               onClick={handleMax}
@@ -192,14 +192,14 @@ const SupplyTab: React.FC<SupplyTabProps> = ({
       {/* APY info */}
       {selectedAsset && (
         <div className="flex items-center justify-between bg-gray-50 dark:bg-white/5 rounded-xl px-4 py-3">
-          <span className="text-xs text-gray-400">Supply APY</span>
+          <span className="text-xs text-gray-600 dark:text-gray-300">Supply APY</span>
           <span className="text-sm font-bold text-green-600">{selectedAsset.supplyApy.toFixed(2)}%</span>
         </div>
       )}
 
       {/* Protocol badge */}
       <div className="flex items-center gap-2 px-1">
-        <span className="text-[10px] font-medium text-gray-300 dark:text-gray-600 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">
+        <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">
           via Vesu Prime Pool
         </span>
       </div>
@@ -252,9 +252,9 @@ const PositionsTab: React.FC<PositionsTabProps> = ({
   if (positions.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
-        <TrendingUp size={32} className="text-gray-300 dark:text-gray-600" />
-        <p className="text-sm font-medium text-gray-400">No active positions</p>
-        <p className="text-xs text-gray-400 max-w-[200px]">
+        <TrendingUp size={32} className="text-gray-500 dark:text-gray-400" />
+        <p className="text-sm font-medium text-gray-600 dark:text-gray-300">No active positions</p>
+        <p className="text-xs text-gray-600 dark:text-gray-300 max-w-[200px]">
           Deposit an asset to start earning yield on Vesu.
         </p>
       </div>
@@ -280,7 +280,7 @@ const PositionsTab: React.FC<PositionsTabProps> = ({
               </div>
               <div className="text-right">
                 <p className="font-semibold text-sm dark:text-white">{position.assetAmount.toFixed(6)}</p>
-                <p className="text-xs text-gray-400">deposited</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">deposited</p>
               </div>
             </div>
 
@@ -339,7 +339,7 @@ const Lending: React.FC = () => {
     <div className="space-y-5 animate-modern">
       {/* Market overview */}
       {loading ? (
-        <div className="flex items-center gap-2 py-6 text-gray-400">
+        <div className="flex items-center gap-2 py-6 text-gray-600 dark:text-gray-300">
           <Loader2 size={16} className="animate-spin" />
           <span className="text-xs font-medium">Loading rates...</span>
         </div>
@@ -352,7 +352,7 @@ const Lending: React.FC = () => {
               </div>
               <p className="text-xs font-semibold dark:text-white">{a.symbol}</p>
               <p className="text-sm font-bold text-green-600">{a.supplyApy.toFixed(2)}%</p>
-              <p className="text-[10px] text-gray-400">APY</p>
+              <p className="text-[10px] text-gray-600 dark:text-gray-300">APY</p>
             </div>
           ))}
         </div>
@@ -367,7 +367,7 @@ const Lending: React.FC = () => {
             className={`flex-1 py-2.5 text-xs font-semibold rounded-lg transition-all ${
               activeTab === tab.id
                 ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm'
-                : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
             }`}
           >
             {tab.label}
@@ -400,8 +400,8 @@ const Lending: React.FC = () => {
 
       {/* Info footer */}
       <div className="flex items-start gap-3 bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
-        <Info size={16} className="mt-0.5 shrink-0 text-gray-400" />
-        <p className="text-xs text-gray-400 leading-relaxed">
+        <Info size={16} className="mt-0.5 shrink-0 text-gray-600 dark:text-gray-300" />
+        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
           Lending powered by <strong className="text-gray-600 dark:text-gray-300">Vesu Protocol</strong>. Deposits go into the Prime pool and earn yield automatically.
         </p>
       </div>

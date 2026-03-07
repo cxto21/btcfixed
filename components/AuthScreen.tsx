@@ -91,7 +91,7 @@ function InstallLink({ wallet }: { wallet: WalletInfo }) {
       href={wallet.installUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-full h-14 border-2 border-white/20 flex items-center justify-between px-6 font-bold tracking-tighter text-white/40 hover:border-white hover:text-white transition-colors"
+      className="w-full h-14 border-2 border-white/20 flex items-center justify-between px-6 font-bold tracking-tighter text-white/80 hover:border-white hover:text-white transition-colors"
     >
       <span className="text-sm uppercase">{wallet.name} — Install</span>
       <ExternalLink size={16} />
@@ -182,7 +182,7 @@ const AuthScreen: React.FC = () => {
             alt="BTC"
             className="w-10 h-10"
           />
-          <div className="h-6 w-[2px] bg-black/10 mx-2" />
+          <div className="h-6 w-[2px] bg-white/20 mx-2" />
           {ACTIVE_NETWORK_CONFIG.isTestnet ? (
             <span className="text-[9px] font-black uppercase tracking-widest bg-amber-400 text-black px-2 py-0.5">
               TESTNET
@@ -194,21 +194,21 @@ const AuthScreen: React.FC = () => {
           )}
         </div>
 
-        <h1 className="text-[88px] leading-[0.75] font-bold tracking-tight mb-8">
+        <h1 className="text-[88px] leading-[0.75] font-bold tracking-tight mb-8 text-white">
           BTC<br />
           <span className="font-medium opacity-80">Fixed</span>
         </h1>
 
         <div className="h-2 w-20 bg-[#F7931A] mb-8" />
 
-        <p className="text-white/60 font-medium text-xl leading-tight max-w-[280px]">
+        <p className="text-white font-medium text-xl leading-tight max-w-[280px]">
           Smart HODLing.<br />Borrow, don't sell your cheap coins.
         </p>
       </div>
 
       {/* Wallet connection section */}
       <div className="mt-auto space-y-3 animate-modern" style={{ animationDelay: '0.1s' }}>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 mb-4">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/70 mb-4">
           Connect your Starknet wallet
         </p>
 
@@ -237,7 +237,7 @@ const AuthScreen: React.FC = () => {
                 </span>
               </div>
             </div>
-            <span className="text-[10px] font-black tracking-widest uppercase opacity-60">
+            <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
               Login →
             </span>
           </button>
@@ -247,7 +247,7 @@ const AuthScreen: React.FC = () => {
         {(detected.length > 0 || notInstalled.length > 0) && (
           <div className="flex items-center gap-3 py-1">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-white/30">or extension wallet</span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-white/70">or extension wallet</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
         )}
@@ -279,12 +279,12 @@ const AuthScreen: React.FC = () => {
         <div className="pt-8 flex flex-col gap-4">
           <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border-l-4 border-[#F7931A]">
             <Shield size={16} className="mt-1 shrink-0 text-[#F7931A]" />
-            <p className="text-[11px] text-white/80 font-bold leading-relaxed">
+            <p className="text-[11px] text-white font-bold leading-relaxed">
               Bitcoin DeFi on Starknet. No liquidations on fixed-rate vaults.
               Full transparency with on-chain proofs.
             </p>
           </div>
-          <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] text-center">
+          <p className="text-[10px] text-white/80 font-black uppercase tracking-[0.2em] text-center">
             Powered by Starknet · {ACTIVE_NETWORK.toUpperCase()}
           </p>
         </div>

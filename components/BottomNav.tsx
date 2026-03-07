@@ -27,10 +27,10 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab }) => {
             onClick={() => setActiveTab(tab.id as TabType)}
             className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all"
           >
-            <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-[#F7931A]/10 text-[#F7931A]' : 'text-gray-400 dark:text-gray-500'}`}>
+            <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-[#F7931A]/10 text-[#F7931A]' : 'text-gray-700 dark:text-gray-300'}`}>
               <Icon size={22} strokeWidth={isActive ? 2.5 : 1.5} />
             </div>
-            <span className={`text-[10px] font-medium ${isActive ? 'text-[#F7931A]' : 'text-gray-400 dark:text-gray-500'}`}>
+            <span className={`text-[10px] font-medium ${isActive ? 'text-[#F7931A]' : 'text-gray-700 dark:text-gray-300'}`}>
               {tab.label}
             </span>
           </button>

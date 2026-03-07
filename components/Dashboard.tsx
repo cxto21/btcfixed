@@ -61,7 +61,7 @@ const ReceiveModal: React.FC<{ address: string; onClose: () => void }> = ({ addr
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold dark:text-white">Receive</h3>
           <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-            <X size={18} className="text-gray-400" />
+            <X size={18} className="text-gray-600 dark:text-gray-300" />
           </button>
         </div>
 
@@ -72,7 +72,7 @@ const ReceiveModal: React.FC<{ address: string; onClose: () => void }> = ({ addr
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-xs font-medium text-gray-400 text-center">Your Starknet Address</p>
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-300 text-center">Your Starknet Address</p>
             <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-3">
               <p className="text-xs font-mono text-gray-600 dark:text-gray-300 break-all text-center leading-relaxed">
                 {address}
@@ -143,7 +143,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
       case 'Swap':         return <Repeat size={16} className="text-blue-500" />;
       case 'Supply':       return <ArrowUpRight size={16} className="text-green-500" />;
       case 'Withdraw':     return <ArrowDownLeft size={16} className="text-red-500" />;
-      default:             return <CheckCircle2 size={16} className="text-gray-400" />;
+      default:             return <CheckCircle2 size={16} className="text-gray-600 dark:text-gray-300" />;
     }
   };
 
@@ -178,7 +178,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
     <div className="space-y-6 animate-modern relative z-10">
       {/* ─── Total Portfolio ─── */}
       <section className="text-center pt-2 pb-4">
-        <p className="text-xs font-medium text-gray-400 dark:text-gray-500 mb-1">Total portfolio</p>
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Total portfolio</p>
         <div className="flex items-center justify-center gap-2">
           <h2 className="text-4xl font-bold tracking-tight dark:text-white">
             {displayCurrency === 'USD' ? '$' : '₿'}
@@ -186,13 +186,13 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
           </h2>
           <button
             onClick={() => setIsPrivacyMode(!isPrivacyMode)}
-            className={`p-1.5 rounded-full transition-all ${isPrivacyMode ? 'text-[#F7931A]' : 'text-gray-300 dark:text-gray-600 hover:text-gray-500'}`}
+            className={`p-1.5 rounded-full transition-all ${isPrivacyMode ? 'text-[#F7931A]' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'}`}
             aria-label="Toggle privacy mode"
           >
             {isPrivacyMode ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
           {isLoading && (
-            <RefreshCw size={14} className="animate-spin text-gray-300 dark:text-gray-600" />
+            <RefreshCw size={14} className="animate-spin text-gray-600 dark:text-gray-300" />
           )}
         </div>
         <button
@@ -217,9 +217,9 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
             className="flex flex-col items-center gap-1.5 group"
           >
             <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center group-hover:bg-[#F7931A]/10 transition-colors">
-              <action.icon size={20} className="text-gray-600 dark:text-gray-300 group-hover:text-[#F7931A] transition-colors" />
+              <action.icon size={20} className="text-gray-900 dark:text-white group-hover:text-[#F7931A] transition-colors" />
             </div>
-            <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">{action.label}</span>
+            <span className="text-[11px] font-medium text-gray-700 dark:text-gray-200">{action.label}</span>
           </button>
         ))}
       </div>
@@ -275,7 +275,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
                 </div>
                 <div>
                   <p className="font-semibold text-sm dark:text-white">{token.name}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
                     {token.loading ? '...' : `${parseFloat(token.balance).toFixed(4)} ${token.symbol}`}
                   </p>
                 </div>
@@ -310,10 +310,10 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
         <div className="bg-gray-50 dark:bg-white/5 rounded-2xl overflow-hidden">
           {recentActivity.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="text-sm text-gray-400 dark:text-gray-500">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 No transactions yet
               </p>
-              <p className="text-xs text-gray-300 dark:text-gray-600 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Start by staking, swapping, or supplying
               </p>
             </div>
@@ -331,7 +331,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
                   </div>
                   <div>
                     <p className="text-sm font-medium dark:text-white">{activity.type}</p>
-                    <p className="text-xs text-gray-400">{activity.label}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">{activity.label}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">

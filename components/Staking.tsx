@@ -80,7 +80,7 @@ function TxBanner({ status, txHash }: { status: TxStatus; txHash: string | null 
 function ValidatorSelector({ selected, onChange }: { selected: ValidatorKey; onChange: (k: ValidatorKey) => void }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-gray-400">Validator</p>
+      <p className="text-xs font-medium text-gray-600 dark:text-gray-300">Validator</p>
       <div className="grid grid-cols-3 gap-2">
         {FEATURED_VALIDATORS.map((v) => (
           <button
@@ -160,14 +160,14 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
       {/* Current position */}
       {position && (
         <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 space-y-4">
-          <p className="text-xs font-medium text-gray-400">Your Position</p>
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-300">Your Position</p>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-400 mb-1">Staked</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mb-1">Staked</p>
               <p className="text-xl font-bold dark:text-white">{stakedDisplay} STRK</p>
             </div>
             <div>
-              <p className="text-xs text-gray-400 mb-1">Rewards</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mb-1">Rewards</p>
               <p className="text-xl font-bold text-green-600">{rewardsDisplay} STRK</p>
             </div>
           </div>
@@ -177,7 +177,7 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
               <div>
                 <p className="text-xs font-medium dark:text-white">{unpoolingDisplay} STRK exiting</p>
                 {unpoolTime && (
-                  <p className="text-xs text-gray-400 mt-0.5">Available: {unpoolTime.toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Available: {unpoolTime.toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                 )}
                 {unpoolTime && new Date() >= unpoolTime && (
                   <button onClick={handleExit} disabled={isPending} className="mt-2 text-xs font-semibold px-3 py-1 rounded-lg bg-black dark:bg-white text-white dark:text-black disabled:opacity-40">
@@ -195,7 +195,7 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
         {(['stake', 'unstake', 'claim'] as const).map((a) => (
           <button key={a} onClick={() => setActiveAction(a)}
             className={`flex-1 py-2.5 text-xs font-semibold rounded-lg transition-all ${
-              activeAction === a ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              activeAction === a ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
             }`}
           >
             {a === 'stake' ? 'Stake' : a === 'unstake' ? 'Unstake' : 'Claim'}
@@ -224,7 +224,7 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
                 Max
               </button>
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-600 dark:text-gray-300">
               STRK amount · Available: {strkAvailable}
             </p>
           </div>
@@ -256,7 +256,7 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
                 </button>
               )}
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-600 dark:text-gray-300">
               STRK to unstake · Staked: {stakedDisplay}
             </p>
           </div>
@@ -277,8 +277,8 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
       {activeAction === 'claim' && (
         <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 space-y-5">
           <div className="text-center space-y-3 py-4">
-            <Gift size={40} className="mx-auto text-gray-300 dark:text-gray-600" />
-            <p className="text-xs text-gray-400">Accumulated Rewards</p>
+            <Gift size={40} className="mx-auto text-gray-500 dark:text-gray-400" />
+            <p className="text-xs text-gray-600 dark:text-gray-300">Accumulated Rewards</p>
             <p className="text-4xl font-bold dark:text-white">{position ? rewardsDisplay : '—'} STRK</p>
           </div>
           <button onClick={handleClaim} disabled={isPending || !hasRewards}
@@ -290,8 +290,8 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
 
       {/* Info footer */}
       <div className="flex items-start gap-3 bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
-        <Info size={16} className="mt-0.5 shrink-0 text-gray-400" />
-        <p className="text-xs text-gray-400 leading-relaxed">
+        <Info size={16} className="mt-0.5 shrink-0 text-gray-600 dark:text-gray-300" />
+        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
           Delegate your STRK to a Starknet validator. Your funds <strong className="text-gray-600 dark:text-gray-300">never leave your wallet</strong> — you only delegate staking power.
         </p>
       </div>
@@ -308,8 +308,8 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
 function ComingSoon({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 space-y-4">
-      <TrendingUp size={40} strokeWidth={1.5} className="text-gray-300 dark:text-gray-600" />
-      <p className="text-sm font-medium text-gray-400">{label} — Coming Soon</p>
+      <TrendingUp size={40} strokeWidth={1.5} className="text-gray-500 dark:text-gray-400" />
+      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{label} — Coming Soon</p>
     </div>
   );
 }
@@ -333,7 +333,7 @@ const Staking: React.FC<StakingProps> = ({ suggestedAmount, clearSuggestedAmount
         {tabs.map((t) => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
             className={`flex-1 py-2.5 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === t.id ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              activeTab === t.id ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
             }`}
           >
             {t.label}

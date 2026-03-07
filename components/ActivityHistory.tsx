@@ -74,19 +74,19 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
         </button>
         <div>
           <h2 className="text-xl font-bold dark:text-white">History</h2>
-          <p className="text-xs text-gray-400">Transaction activity</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Transaction activity</p>
         </div>
       </div>
 
       {/* Search */}
       <div className="bg-gray-100 dark:bg-white/5 rounded-xl flex items-center px-4 h-11">
-        <Search size={16} className="text-gray-400 shrink-0" />
+        <Search size={16} className="text-gray-500 dark:text-gray-400 shrink-0" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by hash or type..."
-          className="bg-transparent outline-none w-full ml-3 text-sm placeholder:text-gray-400 dark:text-white"
+          className="bg-transparent outline-none w-full ml-3 text-sm placeholder:text-gray-500 dark:placeholder:text-gray-400 dark:text-white"
         />
       </div>
 
@@ -94,8 +94,8 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
       <div className="space-y-2">
         {filtered.length === 0 && (
           <div className="py-16 text-center">
-            <CheckCircle2 size={32} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-            <p className="text-sm text-gray-400">
+            <CheckCircle2 size={32} className="mx-auto mb-3 text-gray-500 dark:text-gray-400" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               {allActivities.length === 0 ? 'No transactions yet' : 'No results match your search'}
             </p>
           </div>
@@ -115,7 +115,7 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
               </div>
               <div>
                 <p className="text-sm font-semibold dark:text-white">{activity.type}</p>
-                <p className="text-xs text-gray-400">{timeAgo(activity.timestamp)}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">{timeAgo(activity.timestamp)}</p>
               </div>
             </div>
             <div className="text-right">
@@ -183,15 +183,15 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
               {/* Data Table */}
               <div className="space-y-3 bg-gray-50 dark:bg-white/5 rounded-xl p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-400">Amount</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-300">Amount</span>
                   <span className="text-sm font-semibold dark:text-white">{formatValue(selectedTx.label)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-400">Time</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-300">Time</span>
                   <span className="text-sm font-medium dark:text-white">{timeAgo(selectedTx.timestamp)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-400">Network</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-300">Network</span>
                   <div className="flex items-center gap-1.5">
                     <Shield size={12} className="text-[#F7931A]" />
                     <span className="text-xs font-medium dark:text-white">Starknet Mainnet</span>
@@ -201,7 +201,7 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
 
               {/* TX Hash */}
               <div className="space-y-2">
-                <p className="text-xs text-gray-400">Transaction Hash</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">Transaction Hash</p>
                 <div className="flex items-center justify-between bg-gray-50 dark:bg-white/5 rounded-xl p-3">
                   <span className="text-xs font-mono text-gray-500 dark:text-gray-400 truncate mr-3">{shortHash(selectedTx.txHash)}</span>
                   <div className="flex gap-2">
@@ -239,7 +239,7 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
 
       {/* Footer */}
       <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
-        <p className="text-xs text-gray-400 text-center leading-relaxed">
+        <p className="text-xs text-gray-600 dark:text-gray-300 text-center leading-relaxed">
           All transactions are verified on Starknet. Finality after 2 Bitcoin confirmations.
         </p>
       </div>

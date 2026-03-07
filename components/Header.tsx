@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({
             {isValidAddress && (
               <button
                 onClick={handleCopyAddress}
-                className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                className="flex items-center gap-1 text-[11px] text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white transition-colors"
                 title="Copy full address"
               >
                 {copied ? (
@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
+            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -92,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({
             className={`p-2 rounded-full transition-all ${
               isPrivacyMode
                 ? 'text-[#F7931A] bg-[#F7931A]/10'
-                : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10'
             }`}
             aria-label="Toggle privacy mode"
           >
@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={disconnect}
-            className="p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
             aria-label="Disconnect wallet"
             title="Disconnect wallet"
           >

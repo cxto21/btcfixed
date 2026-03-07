@@ -64,7 +64,7 @@ function TokenSelector({
           {selected.symbol[0]}
         </div>
         <span className="text-sm font-semibold dark:text-white">{selected.symbol}</span>
-        <ChevronDown size={14} className="text-gray-400" />
+        <ChevronDown size={14} className="text-gray-600 dark:text-gray-300" />
       </button>
 
       {open && (
@@ -131,7 +131,7 @@ function ClaimLinkModal({
           </div>
           <div>
             <h3 className="text-lg font-bold dark:text-white">Deposit Complete</h3>
-            <p className="text-xs text-gray-400">Save this claim link — it&apos;s the only way to withdraw</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300">Save this claim link — it&apos;s the only way to withdraw</p>
           </div>
         </div>
 
@@ -145,14 +145,14 @@ function ClaimLinkModal({
 
         {/* Claiming key */}
         <div className="space-y-1">
-          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+          <label className="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
             <Key size={12} /> Claiming Key
           </label>
           <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 rounded-xl px-3 py-2">
             <code className="text-xs dark:text-gray-300 flex-1 break-all font-mono">
               {showKey ? claimKey : '•'.repeat(20)}
             </code>
-            <button onClick={() => setShowKey((s) => !s)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+            <button onClick={() => setShowKey((s) => !s)} className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white">
               {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
           </div>
@@ -160,7 +160,7 @@ function ClaimLinkModal({
 
         {/* Claim link */}
         <div className="space-y-1">
-          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+          <label className="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
             <Lock size={12} /> Claim Link
           </label>
           <div className="bg-gray-50 dark:bg-white/5 rounded-xl px-3 py-2 break-all text-xs font-mono dark:text-gray-300">
@@ -245,11 +245,11 @@ const Verification: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center gap-6 py-20 animate-modern">
         <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-          <Shield size={36} className="text-gray-300 dark:text-gray-600" />
+          <Shield size={36} className="text-gray-500 dark:text-gray-400" />
         </div>
         <div className="text-center space-y-2">
           <h2 className="text-xl font-bold dark:text-white">Anonymous Transactions</h2>
-          <p className="text-sm text-gray-400 max-w-[260px]">
+          <p className="text-sm text-gray-600 dark:text-gray-300 max-w-[260px]">
             Connect a Starknet wallet to use private transactions powered by MistCash ZK technology.
           </p>
         </div>
@@ -266,7 +266,7 @@ const Verification: React.FC = () => {
         </div>
         <div>
           <h2 className="text-lg font-bold dark:text-white">Private Transfer</h2>
-          <p className="text-xs text-gray-400">ZK-powered anonymous transactions on Starknet</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">ZK-powered anonymous transactions on Starknet</p>
         </div>
       </div>
 
@@ -286,7 +286,7 @@ const Verification: React.FC = () => {
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
             activeTab === 'deposit'
               ? 'bg-white dark:bg-white/10 text-[#F7931A] shadow-sm'
-              : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'
           }`}
         >
           <Send size={14} /> Deposit
@@ -296,7 +296,7 @@ const Verification: React.FC = () => {
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
             activeTab === 'withdraw'
               ? 'bg-white dark:bg-white/10 text-[#F7931A] shadow-sm'
-              : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'
           }`}
         >
           <Download size={14} /> Withdraw
@@ -305,7 +305,7 @@ const Verification: React.FC = () => {
 
       {/* Not ready */}
       {!mist.isReady && mist.status === 'initializing' && (
-        <div className="flex items-center justify-center gap-2 py-8 text-gray-400">
+        <div className="flex items-center justify-center gap-2 py-8 text-gray-600 dark:text-gray-300">
           <Loader2 size={18} className="animate-spin" />
           <span className="text-sm">Initializing privacy engine…</span>
         </div>
@@ -317,7 +317,7 @@ const Verification: React.FC = () => {
           {/* Token + amount */}
           <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">You deposit</span>
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">You deposit</span>
               <TokenSelector selected={depositToken} onSelect={setDepositToken} />
             </div>
             <input
@@ -357,7 +357,7 @@ const Verification: React.FC = () => {
         <div className="space-y-4">
           {/* Claiming key */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+            <label className="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
               <Key size={12} /> Claiming Key
             </label>
             <input
@@ -372,7 +372,7 @@ const Verification: React.FC = () => {
 
           {/* Recipient address */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
               Recipient Address
             </label>
             <input
@@ -416,7 +416,7 @@ const Verification: React.FC = () => {
                     BigInt(mist.foundAsset.amount),
                     MIST_TOKENS.find((t) => BigInt(t.address) === BigInt(mist.foundAsset!.addr))?.decimals ?? 18,
                   )}{' '}
-                  <span className="text-base text-gray-400">
+                  <span className="text-base text-gray-600 dark:text-gray-300">
                     {MIST_TOKENS.find((t) => BigInt(t.address) === BigInt(mist.foundAsset!.addr))?.symbol ?? 'TOKEN'}
                   </span>
                 </p>

@@ -46,7 +46,7 @@ function TokenSelector({
           {selected.symbol[0]}
         </div>
         <span className="text-sm font-semibold dark:text-white">{selected.symbol}</span>
-        <ChevronDown size={14} className="text-gray-400" />
+        <ChevronDown size={14} className="text-gray-600 dark:text-gray-300" />
       </button>
 
       {open && (
@@ -138,7 +138,7 @@ const Bridge: React.FC = () => {
         {/* SELL */}
         <div className="bg-white dark:bg-[#1a1a1a] rounded-xl p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <p className="text-xs font-medium text-gray-400">You pay</p>
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-300">You pay</p>
             {address && (
               <button
                 onClick={() => swap.setSellAmount(balanceFormatted)}
@@ -178,19 +178,19 @@ const Bridge: React.FC = () => {
         {/* BUY */}
         <div className="bg-white dark:bg-[#1a1a1a] rounded-xl p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <p className="text-xs font-medium text-gray-400">You receive</p>
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-300">You receive</p>
             <div className="flex items-center gap-2">
               {isGasless && (
                 <span className="text-[10px] font-medium text-green-500 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-full">Gasless</span>
               )}
               {routeName && isReady && (
-                <span className="text-[10px] font-medium text-gray-400 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">via {routeName}</span>
+                <span className="text-[10px] font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">via {routeName}</span>
               )}
             </div>
           </div>
           <div className="flex items-center justify-between gap-3">
             {isQuoting ? (
-              <Loader2 size={24} className="animate-spin text-gray-300" />
+              <Loader2 size={24} className="animate-spin text-gray-500 dark:text-gray-400" />
             ) : (
               <span className={`text-3xl font-bold ${swap.buyAmount ? 'dark:text-white' : 'text-gray-300 dark:text-gray-600'}`}>
                 {swap.buyAmount || '0.00'}
@@ -214,7 +214,7 @@ const Bridge: React.FC = () => {
             { label: 'Slippage', value: '0.5%' },
           ].map((row) => (
             <div key={row.label} className="flex justify-between items-center">
-              <span className="text-xs text-gray-400">{row.label}</span>
+              <span className="text-xs text-gray-600 dark:text-gray-300">{row.label}</span>
               <span className={`text-xs font-medium ${'warn' in row && row.warn ? 'text-red-500' : 'dark:text-white'}`}>
                 {row.value}
               </span>
@@ -246,8 +246,8 @@ const Bridge: React.FC = () => {
 
       {/* Info footer */}
       <div className="flex items-start gap-3 bg-gray-50 dark:bg-white/5 rounded-2xl p-4">
-        <Info size={16} className="mt-0.5 shrink-0 text-gray-400" />
-        <p className="text-xs text-gray-400 leading-relaxed">
+        <Info size={16} className="mt-0.5 shrink-0 text-gray-600 dark:text-gray-300" />
+        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
           Swaps powered by <strong className="text-gray-600 dark:text-gray-300">AVNU</strong>, Starknet's leading DEX aggregator. Best route automatically selected.
         </p>
       </div>
