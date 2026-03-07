@@ -112,6 +112,17 @@ const Bridge: React.FC = () => {
 
   return (
     <div className="space-y-5 animate-modern">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-1">
+        <div className="w-10 h-10 rounded-full bg-[#F7931A]/10 flex items-center justify-center">
+          <RefreshCw size={20} className="text-[#F7931A]" />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold dark:text-white">Swap</h2>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Best rates via AVNU aggregator</p>
+        </div>
+      </div>
+
       {/* Status banner */}
       {(isPending || isSuccess || isError) && (
         <div className={`rounded-2xl p-4 flex items-center gap-3 ${

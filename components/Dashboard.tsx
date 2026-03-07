@@ -36,6 +36,7 @@ const TOKEN_COLORS: Record<string, string> = {
   WBTC: '#F7931A',
   ETH: '#627EEA',
   STRK: '#8B5CF6',
+  USDC: '#2775CA',
 };
 
 interface DashboardProps {
@@ -114,19 +115,26 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
     ACTIVE_TOKENS.WBTC,
     15_000,
   );
+  const { balance: usdcBalance, isLoading: usdcLoading, refetch: refetchUsdc } = useBalance(
+    onChainAddress,
+    ACTIVE_TOKENS.USDC,
+    15_000,
+  );
 
   const { prices } = usePrices();
   const btcPrice = prices.bitcoin?.usd ?? 95000;
   const ethPrice = prices.ethereum?.usd ?? 3000;
   const strkPrice = prices.starknet?.usd ?? 0.5;
+  const usdcPrice = prices['usd-coin']?.usd ?? 1;
 
   const ethUsd = parseFloat(ethBalance.formatted) * ethPrice;
   const strkUsd = parseFloat(strkBalance.formatted) * strkPrice;
   const wbtcUsd = parseFloat(wbtcBalance.formatted) * btcPrice;
-  const totalUsd = ethUsd + strkUsd + wbtcUsd;
+  const usdcUsd = parseFloat(usdcBalance.formatted) * usdcPrice;
+  const totalUsd = ethUsd + strkUsd + wbtcUsd + usdcUsd;
   const totalBtc = btcPrice > 0 ? totalUsd / btcPrice : 0;
 
-  const isLoading = ethLoading || strkLoading || wbtcLoading;
+  const isLoading = ethLoading || strkLoading || wbtcLoading || usdcLoading;
 
   const hide = (val: string) => (isPrivacyMode ? '••••••' : val);
 
@@ -172,6 +180,14 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
       loading: strkLoading,
       change: prices.starknet?.usd_24h_change,
     },
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      balance: usdcBalance.formatted,
+      usd: usdcUsd,
+      loading: usdcLoading,
+      change: prices['usd-coin']?.usd_24h_change,
+    },
   ];
 
   return (
@@ -209,7 +225,7 @@ const Dashboard: React.FC<DashboardProps> = ({ isPrivacyMode, setIsPrivacyMode, 
           { icon: Send, label: 'Swap', action: () => onEarnYield('0') },
           { icon: Download, label: 'Receive', action: () => address && setShowReceiveModal(true) },
           { icon: TrendingUp, label: 'Earn', action: () => onEarnYield(ethBalance.formatted) },
-          { icon: RefreshCw, label: 'Refresh', action: () => { refetchEth(); refetchStrk(); refetchWbtc(); } },
+          { icon: RefreshCw, label: 'Refresh', action: () => { refetchEth(); refetchStrk(); refetchWbtc(); refetchUsdc(); } },
         ].map((action) => (
           <button
             key={action.label}

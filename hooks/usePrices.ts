@@ -37,7 +37,7 @@ export function usePrices(pollMs = 60_000) {
             bitcoin: { usd: data.bitcoin?.usd ?? FALLBACK.bitcoin.usd, usd_24h_change: data.bitcoin?.usd_24h_change },
             ethereum: { usd: data.ethereum?.usd ?? FALLBACK.ethereum.usd, usd_24h_change: data.ethereum?.usd_24h_change },
             starknet: { usd: data.starknet?.usd ?? FALLBACK.starknet.usd, usd_24h_change: data.starknet?.usd_24h_change },
-            'usd-coin': { usd: data['usd-coin']?.usd ?? FALLBACK['usd-coin'].usd },
+            'usd-coin': { usd: data['usd-coin']?.usd ?? FALLBACK['usd-coin'].usd, usd_24h_change: data['usd-coin']?.usd_24h_change },
           });
           setIsStale(false);
         }

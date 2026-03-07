@@ -31,7 +31,7 @@ interface StakingProps {
   clearSuggestedAmount?: () => void;
 }
 
-type Tab = 'staking' | 'lending' | 'liquidity';
+type Tab = 'staking';
 
 function formatAmountDisplay(base: bigint, decimals = 18, dp = 4): string {
   const divisor = 10n ** BigInt(decimals);
@@ -305,45 +305,14 @@ function StakingTab({ suggestedAmount }: { suggestedAmount?: string | null }) {
   );
 }
 
-function ComingSoon({ label }: { label: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 space-y-4">
-      <TrendingUp size={40} strokeWidth={1.5} className="text-gray-500 dark:text-gray-400" />
-      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{label} — Coming Soon</p>
-    </div>
-  );
-}
-
 const Staking: React.FC<StakingProps> = ({ suggestedAmount, clearSuggestedAmount }) => {
-  const [activeTab, setActiveTab] = useState<Tab>('staking');
-
-  const tabs: { id: Tab; label: string }[] = [
-    { id: 'staking', label: 'Staking' },
-    { id: 'lending', label: 'Lending' },
-    { id: 'liquidity', label: 'LP Pools' },
-  ];
-
   useEffect(() => {
     if (suggestedAmount && clearSuggestedAmount) clearSuggestedAmount();
   }, [suggestedAmount, clearSuggestedAmount]);
 
   return (
     <div className="space-y-5 animate-modern">
-      <div className="flex bg-gray-100 dark:bg-white/5 rounded-xl p-1 gap-1">
-        {tabs.map((t) => (
-          <button key={t.id} onClick={() => setActiveTab(t.id)}
-            className={`flex-1 py-2.5 text-xs font-semibold rounded-lg transition-all ${
-              activeTab === t.id ? 'bg-white dark:bg-white/10 text-black dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'staking' && <StakingTab suggestedAmount={suggestedAmount} />}
-      {activeTab === 'lending' && <ComingSoon label="Lending" />}
-      {activeTab === 'liquidity' && <ComingSoon label="LP Pools" />}
+      <StakingTab suggestedAmount={suggestedAmount} />
     </div>
   );
 };

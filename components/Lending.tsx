@@ -337,6 +337,17 @@ const Lending: React.FC = () => {
 
   return (
     <div className="space-y-5 animate-modern">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-1">
+        <div className="w-10 h-10 rounded-full bg-[#F7931A]/10 flex items-center justify-center">
+          <TrendingUp size={20} className="text-[#F7931A]" />
+        </div>
+        <div>
+          <h2 className="text-lg font-bold dark:text-white">Lending</h2>
+          <p className="text-xs text-gray-600 dark:text-gray-300">Earn yield by supplying assets on Vesu</p>
+        </div>
+      </div>
+
       {/* Market overview */}
       {loading ? (
         <div className="flex items-center gap-2 py-6 text-gray-600 dark:text-gray-300">
@@ -344,9 +355,9 @@ const Lending: React.FC = () => {
           <span className="text-xs font-medium">Loading rates...</span>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-2">
-          {assets.slice(0, 3).map(a => (
-            <div key={a.symbol} className="bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+          {assets.map(a => (
+            <div key={a.symbol} className="bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center min-w-[90px] shrink-0">
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold mx-auto mb-2" style={{ backgroundColor: TOKEN_COLORS[a.symbol] ?? '#888' }}>
                 {a.symbol[0]}
               </div>
