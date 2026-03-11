@@ -83,12 +83,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
               BTC<span className="font-medium">Fixed</span>
             </span>
           </div>
-          <button 
-            onClick={onFinish}
-            className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors"
-          >
-            Skip
-          </button>
+          <div className="w-6" />
         </div>
 
         <div className={`flex-1 flex flex-col justify-center px-8 transition-all duration-300 relative z-10 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
@@ -131,9 +126,13 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
               <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
             </button>
             
-            <div className="w-20 h-20 border-2 border-white flex items-center justify-center bg-white/10 backdrop-blur-sm">
+            <button
+              onClick={current === FEATURES.length - 1 ? handleNext : onFinish}
+              className="w-20 h-20 border-2 border-white flex flex-col items-center justify-center gap-0.5 bg-white/10 backdrop-blur-sm"
+            >
               <span className="text-sm font-black italic text-white">0{current + 1}</span>
-            </div>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Skip</span>
+            </button>
           </div>
         </div>
       </div>

@@ -31,3 +31,11 @@ dist-ssr
 # Playwright
 test-results/
 playwright-report/
+
+# Android signing — keystore binario NUNCA va al repo
+signing/*.keystore
+signing/*.jks
+# El .b64 tampoco (contiene la clave privada)
+signing/*.b64
+# keystore.properties local
+android/keystore.properties
