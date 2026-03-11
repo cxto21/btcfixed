@@ -1,0 +1,5 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='384' height='384' viewBox='0 0 384 384'>
+  <rect width='384' height='384' rx='84' fill='#000000'/>
+  <circle cx='192' cy='192' r='131' fill='#F7931A'/>
+  <text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='154' font-weight='bold' font-family='Arial,sans-serif' fill='white'>₿</text>
+</svg>

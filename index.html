@@ -2,8 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>BTCFixed | Bitcoin DeFi on Starknet</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Theme & Status Bar -->
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F7931A" media="(prefers-color-scheme: light)">
+  <meta name="msapplication-TileColor" content="#F7931A">
+  <meta name="msapplication-TileImage" content="/icons/icon-144.png">
+
+  <!-- App meta -->
+  <meta name="application-name" content="BTCFixed">
+  <meta name="description" content="Bitcoin DeFi on Starknet — Earn 5.25% APR, Swap, and Borrow against your BTC without giving up your keys.">
+  <meta name="keywords" content="bitcoin, defi, starknet, btc, yield, staking, lending, crypto">
+  <meta name="author" content="BTCFixed">
+  <meta name="robots" content="index, follow">
+
+  <!-- iOS PWA (Add to Home Screen) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BTCFixed">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-192.png">
+
+  <!-- iOS Splash Screens (iPhone sizes) -->
+  <meta name="apple-touch-startup-image" content="/icons/icon-512.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96.png">
+  <link rel="shortcut icon" href="/icons/icon-96.png">
+
+  <!-- Open Graph (for sharing) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BTCFixed — Bitcoin DeFi on Starknet">
+  <meta property="og:description" content="Earn 5.25% APR on your BTC, swap, and borrow without giving up your keys.">
+  <meta property="og:image" content="/icons/icon-512.png">
+  <meta property="og:url" content="https://btcfixed.pages.dev">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BTCFixed — Bitcoin DeFi on Starknet">
+  <meta name="twitter:description" content="Earn 5.25% APR on your BTC. Swap. Borrow. All on Starknet.">
+  <meta name="twitter:image" content="/icons/icon-512.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Enable class-based dark mode for Tailwind CDN
@@ -131,6 +178,14 @@
 </head>
 <body class="antialiased">
   <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+  <script>
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

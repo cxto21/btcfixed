@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BTCFixed</string>
+    <string name="title_activity_main">BTCFixed</string>
+    <string name="package_name">com.btcfixed.app</string>
+    <string name="custom_url_scheme">com.btcfixed.app</string>
+</resources>

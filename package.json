@@ -9,9 +9,19 @@
     "lint": "tsc",
     "preview": "vite preview",
     "test:e2e": "npx playwright test",
-    "test:e2e:ui": "npx playwright test --ui"
+    "test:e2e:ui": "npx playwright test --ui",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:android": "npm run build && npx cap sync android && npx cap open android",
+    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
+    "deploy": "npm run build && CLOUDFLARE_API_TOKEN=8tvsNHaSG8U8ahYYnk310V-ZcUGieynVHs4r3Aeo CLOUDFLARE_ACCOUNT_ID=eb6e0c55ac7aa3c441500bb7ca73b9e3 npx wrangler pages deploy dist --project-name btcfixed --branch main"
   },
   "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/ios": "^8.2.0",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.1",
     "@cartridge/controller": "^0.13.9",
     "@mistcash/config": "^0.5.2",
     "@mistcash/sdk": "^0.5.2",

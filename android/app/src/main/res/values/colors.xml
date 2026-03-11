@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <!-- BTCFixed brand colors -->
+    <color name="colorPrimary">#F7931A</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#F7931A</color>
+    <color name="colorBackground">#000000</color>
+    <color name="ic_launcher_background">#000000</color>
+</resources>
