@@ -1,28 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { AlertCircle, ExternalLink, Loader2, Mail, Shield, Wallet, Zap } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { NavLink } from 'react-router-dom';
+import { AlertCircle, ExternalLink, Loader2, Mail, Shield, Wallet, Zap, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useAuth } from '../contexts/AuthContext';
-import { setPrivyLogout } from '../contexts/AuthContext';
 import { detectAvailableWallets, WALLET_METADATA, type WalletId, type WalletInfo } from '../config/wallets';
-import { ACTIVE_NETWORK, ACTIVE_NETWORK_CONFIG } from '../config/networks';
+import { ACTIVE_NETWORK_CONFIG } from '../config/networks';
 
-// Argent X and Braavos SVG icons (inline to avoid external icon deps)
 const ArgentIcon = () => (
   <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
-    <rect width="48" height="48" rx="12" fill="#FF875B" />
-    <path d="M24 8L35.2 38H28.4L24 25.2L19.6 38H12.8L24 8Z" fill="white" />
+    <rect width="48" height="48" rx="12" fill="#EE3424" />
+    <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="22" fontWeight="bold" fill="white" fontStyle="italic">A</text>
   </svg>
 );
 
 const BraavosIcon = () => (
   <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
-    <rect width="48" height="48" rx="12" fill="#F5C842" />
-    <circle cx="24" cy="24" r="10" fill="#222" />
-    <circle cx="24" cy="24" r="5" fill="#F5C842" />
+    <circle cx="24" cy="24" r="24" fill="white" />
+    <circle cx="24" cy="24" r="16" fill="#222" />
+    <circle cx="24" cy="24" r="8" fill="#F5C842" />
   </svg>
 );
 
-// Cartridge Controller icon — the "C" logo style
 const CartridgeIcon = () => (
   <svg width="24" height="24" viewBox="0 0 48 48" fill="none">
     <rect width="48" height="48" rx="12" fill="#FBCB4A" />
@@ -30,9 +28,7 @@ const CartridgeIcon = () => (
   </svg>
 );
 
-const WalletIcon = () => (
-  <Wallet size={24} className="text-white" />
-);
+const WalletIcon = () => <Wallet size={24} className="text-white" />;
 
 function WalletButton({
   wallet,
@@ -55,93 +51,130 @@ function WalletButton({
     <button
       onClick={onClick}
       disabled={isLoading}
-      className={`w-full h-16 flex items-center justify-between px-6 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity ${
+      className={`w-full group cursor-pointer transition-all hover-lift rounded-xl ${
         accent
-          ? 'bg-[#FBCB4A] text-black border-2 border-black neo-shadow-orange'
-          : 'bg-black text-white neo-shadow-orange'
+          ? 'glass-effect p-6 flex justify-between items-center'
+          : 'glass-effect p-6 flex justify-between items-center'
       }`}
     >
-      <div className="flex items-center gap-3">
-        {icon}
-        <div className="text-left">
-          <span className={`text-base font-bold tracking-tighter uppercase block ${accent ? 'text-black' : 'text-white'}`}>
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <div className="flex-shrink-0">{icon}</div>
+          <span className="font-headline-md font-bold text-on-surface uppercase tracking-tight">
             {wallet.name}
           </span>
           {wallet.id === 'cartridge' && (
-            <span className="text-[9px] font-bold uppercase tracking-widest opacity-60">
-              Email · Google · Discord · Passkey
-            </span>
+            <span className="bg-primary/20 text-primary text-[9px] px-1.5 py-0.5 rounded font-bold">SOCIAL</span>
           )}
         </div>
+        {wallet.id === 'cartridge' && (
+          <p className="text-[10px] text-outline uppercase tracking-wider font-medium ml-[36px]">
+            Email · Google · Discord · Passkey
+          </p>
+        )}
       </div>
       {isLoading ? (
-        <Loader2 size={20} className={`animate-spin ${accent ? 'text-black/60' : 'text-[#F7931A]'}`} />
+        <Loader2 size={20} className="animate-spin text-primary" />
       ) : (
-        <span className={`text-[10px] font-black tracking-widest uppercase ${accent ? 'text-black/60' : 'text-[#F7931A]'}`}>
-          {wallet.id === 'cartridge' ? <Zap size={16} /> : 'Connect →'}
-        </span>
+        <Zap size={20} className="text-primary group-hover:scale-110 transition-transform" />
       )}
     </button>
   );
 }
 
 function InstallLink({ wallet }: { wallet: WalletInfo }) {
+  const icon =
+    wallet.id === 'argentX' ? <ArgentIcon /> :
+    wallet.id === 'braavos' ? <BraavosIcon /> :
+    <WalletIcon />;
+
   return (
     <a
       href={wallet.installUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-full h-14 border-2 border-white/20 flex items-center justify-between px-6 font-bold tracking-tighter text-white/80 hover:border-white hover:text-white transition-colors"
+      className="flex items-center justify-center gap-3 p-4 glass-effect hover:bg-white/5 transition-all rounded-xl group"
     >
-      <span className="text-sm uppercase">{wallet.name} — Install</span>
-      <ExternalLink size={16} />
+      <div className="flex-shrink-0">{icon}</div>
+      <span className="font-label-caps text-[11px] font-bold text-on-surface uppercase">{wallet.name}</span>
     </a>
   );
 }
+
+const DropdownNavItem: React.FC<{ label: string; items: {name: string; id: string; href?: string}[] }> = ({ label, items }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+  
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-1 text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-caps text-label-caps"
+      >
+        {label}
+        {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+      </button>
+      
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-2 glass-effect rounded-xl p-4 shadow-2xl min-w-48 z-50">
+          <div className="flex flex-col gap-2">
+            {items.map((item) => (
+              <a
+                key={item.id}
+                href={item.href || `/features#${item.id}`}
+                className="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-caps text-label-caps py-2 px-3 rounded-lg hover:bg-white/5"
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AuthScreen: React.FC = () => {
   const { connect, connectWithAddress, isLoading, error } = useAuth();
   const [detected, setDetected] = useState<WalletInfo[]>([]);
   const [connecting, setConnecting] = useState<WalletId | null>(null);
 
-  // Privy hooks
   const privy = usePrivy();
   const privyAvailable = privy.ready;
 
-  // When Privy authenticates, sync address into our AuthContext
   useEffect(() => {
     if (!privy.authenticated || !privy.user) return;
     const user = privy.user as unknown as Record<string, unknown>;
-
-    // Extract a human-readable display name from Privy user
     const email = user.email as { address?: string } | undefined;
     const google = user.google as { email?: string; name?: string } | undefined;
     const twitter = user.twitter as { username?: string } | undefined;
     const apple = user.apple as { email?: string } | undefined;
-    const displayName =
-      google?.name ??
-      google?.email ??
-      email?.address ??
-      twitter?.username ??
-      apple?.email ??
-      null;
-
-    // Try to find a Starknet embedded wallet from linkedAccounts
+    const displayName = google?.name ?? google?.email ?? email?.address ?? twitter?.username ?? apple?.email ?? null;
     const linkedAccounts = (user as unknown as { linkedAccounts?: Array<{ type: string; chainType?: string; address?: string }> }).linkedAccounts;
-    const starknetWallet = linkedAccounts?.find(
-      (a) => a.type === 'wallet' && a.chainType === 'starknet' && a.address,
-    );
-    // Fallback: any embedded wallet (EVM), then user.wallet, then DID
-    const embeddedWallet = linkedAccounts?.find(
-      (a) => a.type === 'wallet' && a.address,
-    );
+    const starknetWallet = linkedAccounts?.find((a) => a.type === 'wallet' && a.chainType === 'starknet' && a.address);
+    const embeddedWallet = linkedAccounts?.find((a) => a.type === 'wallet' && a.address);
     const wallet = user.wallet as { address?: string } | undefined;
     const address = starknetWallet?.address ?? embeddedWallet?.address ?? wallet?.address ?? (user.id as string);
-
     connectWithAddress('privy', address, displayName ?? undefined);
   }, [privy.authenticated, privy.user, connectWithAddress]);
 
-  // Detect injected wallets after a short delay so extensions can inject
   useEffect(() => {
     const t = setTimeout(() => setDetected(detectAvailableWallets()), 600);
     return () => clearTimeout(t);
@@ -149,146 +182,240 @@ const AuthScreen: React.FC = () => {
 
   const handleConnect = async (walletId: WalletId) => {
     setConnecting(walletId);
-    try {
-      await connect(walletId);
-    } finally {
-      setConnecting(null);
-    }
+    try { await connect(walletId); } finally { setConnecting(null); }
   };
 
   const detectedIds = new Set(detected.map((w) => w.id));
-
-  // Wallets to offer for install (not detected, excluding cartridge which is always available)
-  const notInstalled = (['argentX', 'braavos'] as WalletId[]).filter(
-    (id) => !detectedIds.has(id),
-  ).map((id) => WALLET_METADATA[id]);
+  const notInstalled = (['argentX', 'braavos'] as WalletId[])
+    .filter((id) => !detectedIds.has(id))
+    .map((id) => WALLET_METADATA[id]);
 
   return (
-    <div className="min-h-screen bg-[#111] flex flex-col px-10 pt-24 pb-12 max-w-md mx-auto overflow-hidden relative">
-      {/* Background BTC watermark */}
-      <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
+    <div className="min-h-screen bg-background text-on-background relative overflow-hidden">
+      {/* ── Background Blur Orbs ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute -left-1/4 top-0 w-[800px] h-[800px] blur-[120px] opacity-20 bg-primary/40 rounded-full animate-pulse" />
+        {/* Large "B" watermark — positioned upper area behind the form */}
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png"
           alt=""
-          className="w-[220px] h-[220px]"
+          className="absolute left-1/2 top-[5%] -translate-x-1/2 w-full max-w-4xl h-auto opacity-10 mix-blend-screen select-none pointer-events-none"
+          src="/B-Background.png"
         />
+        <div className="absolute -right-20 bottom-0 w-[600px] h-[600px] blur-[100px] opacity-10 bg-primary/30 rounded-full" />
       </div>
 
-      {/* Branding */}
-      <div className="mb-16 animate-modern relative z-10">
-        <div className="flex items-center gap-2 mb-6">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png"
-            alt="BTC"
-            className="w-10 h-10"
-          />
-          <div className="h-6 w-[2px] bg-white/20 mx-2" />
-          {ACTIVE_NETWORK_CONFIG.isTestnet ? (
-            <span className="text-[9px] font-black uppercase tracking-widest bg-amber-400 text-black px-2 py-0.5">
-              TESTNET
-            </span>
-          ) : (
-            <span className="text-[9px] font-black uppercase tracking-widest bg-green-500 text-white px-2 py-0.5">
-              MAINNET
-            </span>
-          )}
+      {/* ── Floating Navigation (desktop only) ── */}
+      <header className="hidden md:block fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-80px)] max-w-[1100px]">
+        <div className="glass-effect rounded-full px-6 py-2 flex justify-between items-center shadow-2xl">
+          <div className="flex items-center gap-3">
+            <NavLink to="/" className="flex items-center justify-center hover:opacity-80 transition-opacity">
+              <div className="h-8 overflow-hidden flex items-center justify-center">
+                <img
+                  src="/BTCFixed-Logotype.png"
+                  alt="BTCFixed"
+                  className="h-36 w-auto object-contain"
+                />
+              </div>
+            </NavLink>
+          </div>
+          <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
+            <DropdownNavItem
+              label="Features"
+              items={[
+                { name: 'Multi-Sign', id: 'multi-sign' },
+                { name: 'Private Lend', id: 'private-lend' },
+                { name: 'Private Transfer', id: 'private-transfer' },
+                { name: 'Private Swap', id: 'private-swap' },
+                { name: 'Private Borrow', id: 'private-borrow' },
+                { name: 'Shielded Send', id: 'shielded-send' },
+                { name: 'Shielded Swap', id: 'shielded-swap' },
+                { name: 'Yield Staking', id: 'yield-staking' },
+              ]}
+            />
+            <DropdownNavItem
+              label="Technology"
+              items={[
+                { name: 'Documentation', id: 'docs', href: '/docs' },
+                { name: 'Starknet', id: 'starknet', href: '/docs' },
+                { name: 'Security', id: 'security', href: '/docs' },
+              ]}
+            />
+            <DropdownNavItem
+              label="Community"
+              items={[
+                { name: 'Telegram', id: 'telegram', href: '/community' },
+                { name: 'Twitter', id: 'twitter', href: '/community' },
+                { name: 'About Us', id: 'about', href: '/about' },
+              ]}
+            />
+          </nav>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center bg-tertiary/10 px-3 py-1 rounded-full border border-tertiary/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-tertiary mr-2 animate-pulse" />
+              <span className="font-label-caps text-[10px] text-tertiary tracking-widest">
+                {ACTIVE_NETWORK_CONFIG.isTestnet ? 'TESTNET' : 'MAINNET'}
+              </span>
+            </div>
+          </div>
         </div>
+      </header>
 
-        <h1 className="text-[88px] leading-[0.75] font-bold tracking-tight mb-8 text-white">
-          BTC<br />
-          <span className="font-medium opacity-80">Fixed</span>
-        </h1>
+      {/* ── Hero Section ── */}
+      <main className="relative z-10 min-h-screen flex items-center justify-center py-20 px-6 md:px-12 lg:px-20">
+        <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-center">
 
-        <div className="h-2 w-20 bg-[#F7931A] mb-8" />
+          {/* Left: Branding (desktop) / Centered hero (mobile) */}
+          <div className="flex-1 w-full max-w-xl text-center lg:text-left">
+            <img
+              src="/BTCFixed-Logotype.png"
+              alt="BTCFixed"
+              className="h-40 md:h-48 w-auto object-contain mx-auto lg:mx-0 mb-8"
+            />
+            <div className="w-48 h-2.5 bg-primary rounded-full mx-auto lg:mx-0 mb-8" />
 
-        <p className="text-white font-medium text-xl leading-tight max-w-[280px]">
-          Smart HODLing.<br />Borrow, don't sell your cheap coins.
-        </p>
-      </div>
+            <p className="font-headline-md text-headline-md max-w-lg text-on-surface-variant mb-10 leading-relaxed">
+              Built for true BTC lovers staying ahead simply and securely: Private Lend, Private Transfer, Private Swap, Private Borrow, Shielded Send, Shielded Swap.
+            </p>
 
-      {/* Wallet connection section */}
-      <div className="mt-auto space-y-3 animate-modern" style={{ animationDelay: '0.1s' }}>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/70 mb-4">
-          Connect your Starknet wallet
-        </p>
-
-        {/* ── Cartridge Controller: always available, no extension needed ── */}
-        <WalletButton
-          wallet={WALLET_METADATA.cartridge}
-          onClick={() => handleConnect('cartridge')}
-          isLoading={connecting === 'cartridge' && isLoading}
-          accent
-        />
-
-        {/* ── Privy: email / social login ── */}
-        {privyAvailable && (
-          <button
-            onClick={() => privy.login()}
-            className="w-full h-16 flex items-center justify-between px-6 bg-[#6851FF] text-white transition-opacity hover:opacity-90"
-          >
-            <div className="flex items-center gap-3">
-              <Mail size={24} />
-              <div className="text-left">
-                <span className="text-base font-bold tracking-tighter uppercase block">
-                  Privy
-                </span>
-                <span className="text-[9px] font-bold uppercase tracking-widest opacity-60">
-                  Email · Google · Twitter · Apple
-                </span>
+            {/* Desktop-only feature highlights */}
+            <div className="hidden lg:grid grid-cols-2 gap-4 max-w-md">
+              <div className="glass-effect rounded-xl p-4 text-left">
+                <p className="text-primary font-bold text-lg">5.25%</p>
+                <p className="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-widest">APR Staking</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 text-left">
+                <p className="text-primary font-bold text-lg">ZK</p>
+                <p className="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-widest">Privacy</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 text-left">
+                <p className="text-primary font-bold text-lg">BTC</p>
+                <p className="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-widest">Native Assets</p>
+              </div>
+              <div className="glass-effect rounded-xl p-4 text-left">
+                <p className="text-primary font-bold text-lg">Starknet</p>
+                <p className="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-widest">L2 Network</p>
               </div>
             </div>
-            <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
-              Login →
-            </span>
-          </button>
-        )}
-
-        {/* Separator */}
-        {(detected.length > 0 || notInstalled.length > 0) && (
-          <div className="flex items-center gap-3 py-1">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-white/70">or extension wallet</span>
-            <div className="flex-1 h-px bg-white/10" />
           </div>
-        )}
 
-        {/* Detected injected wallets */}
-        {detected.map((wallet) => (
-          <WalletButton
-            key={wallet.id}
-            wallet={wallet}
-            onClick={() => handleConnect(wallet.id)}
-            isLoading={connecting === wallet.id && isLoading}
-          />
-        ))}
+          {/* Right: Connection Card */}
+          <div className="w-full max-w-lg lg:w-[480px] flex-shrink-0">
+            <div className="heavy-glass p-10 rounded-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] space-y-8">
+              <div className="space-y-2">
+              <h2 className="font-label-caps text-label-caps text-outline tracking-[0.2em] uppercase text-center">
+                Select Wallet Connection
+              </h2>
+              <div className="h-px w-12 bg-outline/20 mx-auto mt-4" />
+            </div>
 
-        {/* Not installed wallets – show install links */}
-        {notInstalled.map((wallet) => (
-          <InstallLink key={wallet.id} wallet={wallet} />
-        ))}
+            <div className="space-y-4 text-left">
+              {/* Cartridge */}
+              <WalletButton
+                wallet={WALLET_METADATA.cartridge}
+                onClick={() => handleConnect('cartridge')}
+                isLoading={connecting === 'cartridge' && isLoading}
+                accent
+              />
 
-        {/* Error message */}
-        {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-900/30 border border-red-500/50 text-red-300 mt-2">
-            <AlertCircle size={14} className="mt-0.5 shrink-0" />
-            <p className="text-[11px] font-medium leading-relaxed">{error}</p>
+              {/* Privy */}
+              {privyAvailable && (
+                <button
+                  onClick={() => privy.login()}
+                  className="w-full glass-effect p-6 rounded-xl group cursor-pointer hover:bg-white/5 transition-all hover-lift flex justify-between items-center"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Mail size={20} className="text-primary" />
+                      <span className="font-headline-md font-bold text-on-surface uppercase tracking-tight">Private</span>
+                    </div>
+                    <p className="text-[10px] text-outline uppercase tracking-wider font-medium ml-[28px]">
+                      Email · Twitter · Apple
+                    </p>
+                  </div>
+                  <span className="text-outline group-hover:text-primary transition-colors">
+                    <ExternalLink size={20} />
+                  </span>
+                </button>
+              )}
+
+              {/* Separator */}
+              {(detected.length > 0 || notInstalled.length > 0) && (
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-outline-variant/20" />
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="bg-surface-container px-4 font-label-caps text-[9px] text-outline uppercase tracking-[0.3em]">
+                      OR EXTENSION
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Detected wallets */}
+              {detected.map((wallet) => (
+                <WalletButton
+                  key={wallet.id}
+                  wallet={wallet}
+                  onClick={() => handleConnect(wallet.id)}
+                  isLoading={connecting === wallet.id && isLoading}
+                />
+              ))}
+
+              {/* Install links - 2-column grid like new_design */}
+              {notInstalled.length > 0 && (
+                <div className="grid grid-cols-2 gap-3">
+                  {notInstalled.map((wallet) => (
+                    <InstallLink key={wallet.id} wallet={wallet} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="flex items-start gap-2 p-3 bg-error-container/30 border border-error/50 rounded-xl text-error">
+                <AlertCircle size={14} className="mt-0.5 shrink-0" />
+                <p className="text-[11px] font-medium leading-relaxed">{error}</p>
+              </div>
+            )}
+
+            {/* Audited / Secure badges */}
+            <div className="flex items-center justify-center gap-6 pt-4 text-outline/60">
+              <div className="flex items-center gap-1.5">
+                <Shield size={14} />
+                <span className="text-[10px] font-medium uppercase tracking-widest">Audited</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Lock size={14} />
+                <span className="text-[10px] font-medium uppercase tracking-widest">Secure</span>
+              </div>
+            </div>
           </div>
-        )}
-
-        {/* Footer info */}
-        <div className="pt-8 flex flex-col gap-4">
-          <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border-l-4 border-[#F7931A]">
-            <Shield size={16} className="mt-1 shrink-0 text-[#F7931A]" />
-            <p className="text-[11px] text-white font-bold leading-relaxed">
-              Bitcoin DeFi on Starknet. No liquidations on fixed-rate vaults.
-              Full transparency with on-chain proofs.
-            </p>
-          </div>
-          <p className="text-[10px] text-white/80 font-black uppercase tracking-[0.2em] text-center">
-            Powered by Starknet · {ACTIVE_NETWORK.toUpperCase()}
-          </p>
         </div>
       </div>
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="relative z-10 bg-background">
+        <div className="max-w-[1280px] mx-auto px-10 py-12 border-t border-outline-variant/10">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
+              <img
+                src="/BTCFixed-Logotype.png"
+                alt="BTCFixed"
+                className="h-6 w-auto object-contain"
+              />
+              <p className="font-body-md text-mono-data text-outline">© 2026 BTCFixed. Secure Bitcoin DeFi on Starknet.</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+              <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="/docs">Docs</a>
+              <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="https://x.com/btcfixed" target="_blank" rel="noopener noreferrer">Twitter</a>
+              <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="https://t.me/btcfixed" target="_blank" rel="noopener noreferrer">Discord</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

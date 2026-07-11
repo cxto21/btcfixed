@@ -194,7 +194,7 @@ const ActivityHistory: React.FC<ActivityHistoryProps> = ({ isPrivacyMode, onBack
                   <span className="text-xs text-gray-600 dark:text-gray-300">Network</span>
                   <div className="flex items-center gap-1.5">
                     <Shield size={12} className="text-[#F7931A]" />
-                    <span className="text-xs font-medium dark:text-white">Starknet Mainnet</span>
+                    <span className="text-xs font-medium dark:text-white">Starknet Testnet</span>
                   </div>
                 </div>
               </div>

@@ -1,6 +1,8 @@
 
 export type TabType = 'dashboard' | 'bridge' | 'staking' | 'lending' | 'verify' | 'activity';
 
+export type RouteType = TabType | 'community' | 'docs' | 'about';
+
 export interface TokenData {
   symbol: string;
   name: string;

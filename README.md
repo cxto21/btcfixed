@@ -5,7 +5,7 @@
 
 <p align="center"><em>Bitcoin DeFi on Starknet</em></p>
 
-<p align="center">"A mobile-first DeFi platform for Bitcoin holders, built on Starknet mainnet. Full Open Source"<br/>~ by ReflecterLABS.xyz</p>
+<p align="center">A mobile-first DeFi platform for Bitcoin holders, built on Starknet mainnet. Full Open Source.</p>
 
 ## Features
 

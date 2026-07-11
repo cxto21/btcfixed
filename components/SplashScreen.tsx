@@ -63,25 +63,22 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       {/* Mobile-constrained container */}
       <div className="w-full max-w-md bg-[#111] relative flex flex-col shadow-2xl">
         
-        {/* Background Decor - Official Logo as watermark, top-right, smaller, 35% opacity */}
+        {/* Background Decor - "B" watermark, top-right, smaller, 35% opacity */}
         <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
           <img 
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png" 
-            alt="BTC" 
-            className="w-[220px] h-[220px]"
+            src="/B-Background.png" 
+            alt="" 
+            className="w-[220px] h-[220px] object-contain"
           />
         </div>
 
         <div className="relative z-10 flex justify-between items-center p-8 pt-12">
           <div className="flex items-center gap-4">
             <img 
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1280px-Bitcoin.svg.png" 
-              alt="BTC" 
-              className="w-10 h-10"
+              src="/favicon.png" 
+              alt="BTCFixed" 
+              className="h-12 w-12 object-contain"
             />
-            <span className="text-2xl font-black tracking-tight text-white">
-              BTC<span className="font-medium">Fixed</span>
-            </span>
           </div>
           <div className="w-6" />
         </div>

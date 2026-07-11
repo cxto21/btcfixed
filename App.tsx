@@ -1,19 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import SplashScreen from './components/SplashScreen';
 import AuthScreen from './components/AuthScreen';
 import BottomNav from './components/BottomNav';
 import Header from './components/Header';
+import DesktopLayout from './components/DesktopLayout';
+import LandingPage from './components/LandingPage';
 import Dashboard from './components/Dashboard';
 import Bridge from './components/Bridge';
 import Staking from './components/Staking';
 import Lending from './components/Lending';
 import Verification from './components/Verification';
 import ActivityHistory from './components/ActivityHistory';
+import Community from './components/Community';
+import Docs from './components/Docs';
+import About from './components/About';
+import Features from './components/Features';
 import { AuthProvider, useAuth, setPrivyLogout } from './contexts/AuthContext';
 import { usePrivy } from '@privy-io/react-auth';
 import type { TabType } from './types';
 
-// Bridge to register Privy logout function into AuthContext
 function PrivyLogoutBridge() {
   const { logout } = usePrivy();
   React.useEffect(() => {
@@ -23,24 +29,45 @@ function PrivyLogoutBridge() {
   return null;
 }
 
-// Inner shell – rendered only when wallet is connected
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isDesktop;
+}
+
+const pathToTab: Record<string, TabType> = {
+  '/app': 'dashboard',
+  '/app/swap': 'bridge',
+  '/app/earn': 'staking',
+  '/app/vault': 'lending',
+  '/app/identity': 'verify',
+  '/app/activity': 'activity',
+};
+
+// App shell - only rendered inside /app
 const AppShell: React.FC = () => {
   const { isConnected } = useAuth();
-  // Skip splash if user has a saved session (returning user)
+  const isDesktop = useIsDesktop();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const hasSavedSession = !!localStorage.getItem('btcfixed_wallet_v1');
   const [showSplash, setShowSplash] = useState(!hasSavedSession);
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [isPrivacyMode, setIsPrivacyMode] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [suggestedAmount, setSuggestedAmount] = useState<string | null>(null);
-  const mainRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to top on tab switch
+  const activeTab: TabType = pathToTab[location.pathname] ?? 'dashboard';
+
   useEffect(() => {
     mainRef.current?.scrollTo({ top: 0 });
-  }, [activeTab]);
+  }, [location.pathname]);
 
-  // Apply dark mode class to <html>
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
     document.body.classList.toggle('dark', isDarkMode);
@@ -56,54 +83,47 @@ const AppShell: React.FC = () => {
 
   const handleEarnYield = (amount: string) => {
     setSuggestedAmount(amount);
-    setActiveTab('staking');
+    navigate('/app/earn');
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return (
-          <Dashboard
-            isPrivacyMode={isPrivacyMode}
-            setIsPrivacyMode={setIsPrivacyMode}
-            onEarnYield={handleEarnYield}
-            onSeeAllActivity={() => setActiveTab('activity')}
-          />
-        );
-      case 'bridge':
-        return <Bridge />;
-      case 'staking':
-        return (
-          <Staking
-            suggestedAmount={suggestedAmount}
-            clearSuggestedAmount={() => setSuggestedAmount(null)}
-          />
-        );
-      case 'lending':
-        return <Lending />;
-      case 'verify':
-        return <Verification />;
-      case 'activity':
-        return (
-          <ActivityHistory
-            isPrivacyMode={isPrivacyMode}
-            onBack={() => setActiveTab('dashboard')}
-          />
-        );
-      default:
-        return (
-          <Dashboard
-            isPrivacyMode={isPrivacyMode}
-            setIsPrivacyMode={setIsPrivacyMode}
-            onEarnYield={handleEarnYield}
-            onSeeAllActivity={() => setActiveTab('activity')}
-          />
-        );
+  const renderPage = () => {
+    switch (location.pathname) {
+      case '/app/swap':    return <Bridge />;
+      case '/app/earn':    return <Staking suggestedAmount={suggestedAmount} clearSuggestedAmount={() => setSuggestedAmount(null)} />;
+      case '/app/vault':   return <Lending />;
+      case '/app/identity': return <Verification />;
+      case '/app/activity': return <ActivityHistory isPrivacyMode={isPrivacyMode} onBack={() => navigate('/app')} />;
+      case '/community':   return <Community />;
+      case '/docs':        return <Docs />;
+      case '/about':       return <About />;
+      default:             return (
+        <Dashboard
+          isPrivacyMode={isPrivacyMode}
+          setIsPrivacyMode={setIsPrivacyMode}
+          onEarnYield={handleEarnYield}
+          onSeeAllActivity={() => navigate('/app/activity')}
+        />
+      );
     }
   };
 
+  if (isDesktop) {
+    return (
+      <DesktopLayout
+        isPrivacyMode={isPrivacyMode}
+        setIsPrivacyMode={setIsPrivacyMode}
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
+      >
+        <div ref={mainRef} className="w-full max-w-4xl mx-auto animate-modern">
+          {renderPage()}
+        </div>
+      </DesktopLayout>
+    );
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-white dark:bg-[#111] text-black dark:text-white max-w-md mx-auto relative overflow-x-hidden transition-colors duration-300">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-[#131313] text-black dark:text-on-background max-w-md mx-auto relative overflow-x-hidden transition-colors duration-300">
       <Header
         isPrivacyMode={isPrivacyMode}
         setIsPrivacyMode={setIsPrivacyMode}
@@ -111,21 +131,42 @@ const AppShell: React.FC = () => {
         setIsDarkMode={setIsDarkMode}
         activeTab={activeTab}
       />
-
       <main ref={mainRef} className="flex-1 pb-24 pt-4 px-5 overflow-y-auto">
-        {renderContent()}
+        {renderPage()}
       </main>
-
-      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <BottomNav />
     </div>
   );
 };
 
-// Root – wraps everything in AuthProvider
+// Root routes - landing, community, docs, about (no login required)
+const RootRoutes: React.FC = () => {
+  const location = useLocation();
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    document.body.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/community" element={<Community />} />
+      <Route path="/docs" element={<Docs />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/features" element={<Features />} />
+      <Route path="/app/*" element={<AppShell />} />
+    </Routes>
+  );
+};
+
 const App: React.FC = () => (
   <AuthProvider>
-    <PrivyLogoutBridge />
-    <AppShell />
+    <BrowserRouter>
+      <PrivyLogoutBridge />
+      <RootRoutes />
+    </BrowserRouter>
   </AuthProvider>
 );
 
