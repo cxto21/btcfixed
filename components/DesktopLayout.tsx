@@ -281,7 +281,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               <a href="https://x.com/btcfixed" target="_blank" rel="noopener noreferrer" className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors">
                 Twitter
               </a>
-              <a href="https://t.me/btcfixed" target="_blank" rel="noopener noreferrer" className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors">
+              <a href="https://t.me/+umoVSGsajrY2M2Vh" target="_blank" rel="noopener noreferrer" className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors">
                 Telegram
               </a>
               <NavLink to="/community" className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors">

@@ -417,7 +417,7 @@ const AuthScreen: React.FC = () => {
             <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
               <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="/docs">Docs</a>
               <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="https://x.com/btcfixed" target="_blank" rel="noopener noreferrer">Twitter</a>
-              <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="https://t.me/btcfixed" target="_blank" rel="noopener noreferrer">Discord</a>
+              <a className="text-outline font-label-caps text-label-caps hover:text-primary transition-colors" href="https://t.me/+umoVSGsajrY2M2Vh" target="_blank" rel="noopener noreferrer">Discord</a>
             </div>
           </div>
         </div>
