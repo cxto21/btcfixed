@@ -116,9 +116,9 @@ const stats = [
 ];
 
 const partnerLogos = [
-  { name: 'Starknet', src: 'https://images.ctfassets.net/mcxwnmool9vd/1WlPo0lI1eq1fQ5ft3lgTv/b7f87dd05766bedba8cf8a876aee5695/logo-starknet.png?f=center&fit=fill&w=640&h=237&q=75' },
-  { name: 'Starkware', src: 'https://mintcdn.com/avnu/_JpzWk4ZjyPdn4Yr/images/companies/Starkware.png?fit=max&auto=format&n=_JpzWk4ZjyPdn4Yr&q=85&s=95e3c13aa6dc7a960f162cecedaf9278' },
-  { name: 'Ready', src: 'https://mintcdn.com/avnu/_JpzWk4ZjyPdn4Yr/images/companies/ready.png?fit=max&auto=format&n=_JpzWk4ZjyPdn4Yr&q=85&s=15aae26bd380f2fb085bda6b03ae3f8a' },
+  { name: 'Starknet', src: 'https://images.ctfassets.net/mcxwnmool9vd/1WlPo0lI1eq1fQ5ft3lgTv/b7f87dd05766bedba8cf8a876aee5695/logo-starknet.png?f=center&fit=fill&w=640&h=237&q=75', white: true },
+  { name: 'Starkware', src: 'https://mintcdn.com/avnu/_JpzWk4ZjyPdn4Yr/images/companies/Starkware.png?fit=max&auto=format&n=_JpzWk4ZjyPdn4Yr&q=85&s=95e3c13aa6dc7a960f162cecedaf9278', white: true },
+  { name: 'Ready', src: 'https://mintcdn.com/avnu/_JpzWk4ZjyPdn4Yr/images/companies/ready.png?fit=max&auto=format&n=_JpzWk4ZjyPdn4Yr&q=85&s=15aae26bd380f2fb085bda6b03ae3f8a', white: true },
   { name: 'Vesu', src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAMAAADUMSJqAAABUFBMVEUAAAD///+5ubn6+vouLi6xsbGlpaW1tbXw8PARERGUlJR2dnYdHR3k5OQyMjI4ODhbW1snJycYGBhgYGBsbGxJSUlWVlYLCwvHx8c/Pz+EhISfn5+/v78WGBtPT09CNSGihxqjnSeLtDx9wU51yFl702+I4Y6U8LKW9Mvl//ZPSUZ8UwC1iBirkx+YpzOFu0Og9MLP+dthobRqscdrPAC9gBSXtD2Kz2Wb34in6aSz8bnS99F7m6W26fnBdAKgwEme0GWo3X+36JnF8K9kiZWpUgCwuUC40GLB33vM65jm/dms0t5jKADWbQjGliXErTjN0WDS3XXe6Zfl7azy89M7SU3YXwDJbQrPjyLgyFvq3IDr5JX477a6uKeKrbeXMgDkt1LR8vxJAADYhjFhc3nEVQDnrVmcnI6nwMiHMgDsv3by4J7vzYve2LvKhzR4UBNXaxXFAAACwUlEQVRoge3Z6XPSQBQA8F0CIUBCyEEIAVNrPbG12lqvClVbz1rrUWtb8UAqVqD6/3/z7S67ph3KxBnwQ2ffB+gub39JXl62w4DwBANJ/ETcSCfGHGlD4Gk09kgLPDF+PCFxiUtc4hKXuMQlLnGJn35c1/UzQ/LKnlMoH5kpFT0nNPnIsiyb/52xbXsoXvH96tTZ6XMz5y9cvHT5ik+Pp9KvCBCaarH1rj+YwYrvwthWME5xvALT+SF4qVar5a/Ozl2bnwH8+g0MZ1tQKKKxN4ekpZmrMB9WZjSMVY5n4aPksDNfWFxcuLk0O31r/vadu/eWIalEzjjQyenlgFDg3B2YStGK6PQS3Jj4/Xq9XmuAvvLg4aPVZSiLCqmimsyAKUPUHkpWjYnnAV973Fiae/L02fPVFzm6WCwjrIZQKorTQTwcrdfr6y83Gq82X795+24L2gAK6wjJJdlkNS6iaMTE11qt1vvtDzubu3sfm5+gB+GjIMeDNEISJUm+X8mFmX/ELcA/f9nY+bq712t6CBXx8YAGcjQ+0PxsMT6ODkD/tt0GvHmIGJ5IRSJBW91NGQo/QDU+vg/4/vd2Z7fX/IFYWcRzeCx0L6DPVzY2jgA/+NnudHtNcsHkhuYEZ5smVCVpmkkxBbpPXwWgjsBToE+1O/3eIV8sHmyaTl99FKEMmiW6UxuBe1jBwa9uvxnQITSIwrsir1CWXLfO06uUrfytnopH4MhQFON3p7/Fdkf2+NNtrkCaxGP3wQjo3mRWaM2RSbNMPZ+jW9rJODl0rbvFr/zIxoWDwS2L7FwGXzTozmAUTrpPPcQuH1uqaGs/HJSuKhrRyLKpgCUpaobsa8O23IEehqFeQNEoO67jWUemTK9QCKNTuud45O6UdJvdkVP0P1TiEpe4xCUucYlLXOIS/7/4RH9snejPxJMKiQ+NP1QJS6HcGpU5AAAAAElFTkSuQmCC' },
   { name: 'Ekubo', src: 'https://cdn.bankless.com/i/1716899195835021.png' },
   { name: 'STRK20', src: 'https://framerusercontent.com/images/KHsTqzcNJn981dsR0vwIJ6vDD0.png' },
@@ -275,7 +275,7 @@ const LandingPage: React.FC = () => {
                   key={`${logo.name}-${i}`}
                   src={logo.src}
                   alt={logo.name}
-                  className="h-8 md:h-10 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity duration-300 flex-shrink-0"
+                  className={`h-8 md:h-10 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity duration-300 flex-shrink-0${logo.white ? ' brightness-0 invert' : ''}`}
                 />
               ))}
             </div>
