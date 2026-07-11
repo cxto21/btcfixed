@@ -31,6 +31,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-is": "^19.2.4",
+    "react-router-dom": "^7.6.1",
     "recharts": "^3.7.0",
     "starknet": "^9.2.1",
     "starkzap": "^1.0.0",
