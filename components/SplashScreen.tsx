@@ -73,14 +73,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         </div>
 
         <div className="relative z-10 flex justify-between items-center p-8 pt-12">
-          <div className="flex items-center gap-4">
-            <img 
-              src="/favicon.png" 
-              alt="BTCFixed" 
-              className="h-12 w-12 object-contain"
-            />
-          </div>
-          <div className="w-6" />
+          <div />
         </div>
 
         <div className={`flex-1 flex flex-col justify-center px-8 transition-all duration-300 relative z-10 ${animating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
