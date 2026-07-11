@@ -22,7 +22,7 @@
     "@capacitor/ios": "^8.2.0",
     "@capacitor/splash-screen": "^8.0.1",
     "@capacitor/status-bar": "^8.0.1",
-    "@cartridge/controller": "^0.13.9",
+    "@cartridge/controller": "^0.13.13",
     "@mistcash/config": "^0.5.2",
     "@mistcash/sdk": "^0.5.2",
     "@privy-io/react-auth": "^3.16.0",

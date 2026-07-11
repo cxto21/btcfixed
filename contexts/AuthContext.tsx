@@ -85,11 +85,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // connect() returns the account object directly on success, or throws on failure/cancel
       const account = await connector.connect();
 
-      if (!account) throw new Error('Cartridge: connection cancelled');
+      if (!account) {
+        // User cancelled or popup was closed without completing auth
+        if (!silent) setState((s) => ({ ...s, isLoading: false, error: null }));
+        return;
+      }
 
       // The account address is available as account.address
       const address = (account as unknown as { address: string }).address;
-      if (!address) throw new Error('Cartridge: could not retrieve address');
+      if (!address) throw new Error('Cartridge: could not retrieve wallet address. Please try again.');
 
       setState({
         isConnected: true,
@@ -105,9 +109,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Cartridge handles account events internally — no listener needed
       cleanupRef.current = () => {/* no-op */};
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Cartridge: connection failed';
-      if (!silent) setState((s) => ({ ...s, isLoading: false, error: message }));
-      throw err;
+      const rawMessage = err instanceof Error ? err.message : String(err);
+
+      // Map common Cartridge errors to user-friendly messages
+      let message: string;
+      if (rawMessage.includes('Timeout waiting for keychain')) {
+        message = 'Cartridge keychain is taking too long to respond. Please try again or check your connection.';
+      } else if (rawMessage.includes('destroyed connection')) {
+        message = 'Cartridge connection was interrupted. Please try again.';
+      } else if (rawMessage.includes('cancelled') || rawMessage.includes('cancel')) {
+        message = ''; // User cancelled — clear error silently
+      } else {
+        message = rawMessage || 'Cartridge: connection failed. Please try again.';
+      }
+
+      if (!silent && message) {
+        setState((s) => ({ ...s, isLoading: false, error: message }));
+      } else if (!silent) {
+        setState((s) => ({ ...s, isLoading: false, error: null }));
+      }
+      // Don't re-throw — the error state is already set above.
+      // Re-throwing causes unhandled promise rejection in the UI handler.
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -160,7 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Connection failed';
       if (!silent) setState((s) => ({ ...s, isLoading: false, error: message }));
-      throw err;
+      // Don't re-throw — the error state is already set above.
     }
   }, [_connectCartridge]); // eslint-disable-line react-hooks/exhaustive-deps
 

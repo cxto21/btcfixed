@@ -182,7 +182,13 @@ const AuthScreen: React.FC = () => {
 
   const handleConnect = async (walletId: WalletId) => {
     setConnecting(walletId);
-    try { await connect(walletId); } finally { setConnecting(null); }
+    try {
+      await connect(walletId);
+    } catch {
+      // Error is already set in AuthContext state — nothing more needed here
+    } finally {
+      setConnecting(null);
+    }
   };
 
   const detectedIds = new Set(detected.map((w) => w.id));

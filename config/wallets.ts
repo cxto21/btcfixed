@@ -1,7 +1,7 @@
 // BTCFixed – Wallet definitions for browser-injected Starknet wallets
-import ControllerConnector from '@cartridge/controller';
+import ControllerProvider from '@cartridge/controller';
 import type { Call } from 'starknet';
-import { NETWORKS } from './networks';
+import { NETWORKS, ACTIVE_NETWORK } from './networks';
 
 export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'privy' | 'any';
 
@@ -69,17 +69,25 @@ export const WALLET_METADATA: Record<WalletId, WalletInfo> = {
 // Cartridge Controller singleton
 // ---------------------------------------------------------------------------
 
-let _cartridgeConnector: InstanceType<typeof ControllerConnector> | null = null;
+let _cartridgeConnector: InstanceType<typeof ControllerProvider> | null = null;
 
-export function getCartridgeConnector(): InstanceType<typeof ControllerConnector> {
+export function getCartridgeConnector(): InstanceType<typeof ControllerProvider> {
   if (!_cartridgeConnector) {
-    // Use mainnet RPC via Cartridge's own endpoint for best reliability
-    const mainnetRpc = NETWORKS.mainnet.rpcUrl;
-    _cartridgeConnector = new ControllerConnector({
-      chains: [{ rpcUrl: mainnetRpc }],
+    // Build chain config based on active network
+    const networkConfig = NETWORKS[ACTIVE_NETWORK];
+    const chains = [
+      { rpcUrl: networkConfig.rpcUrl },
+      // Always include mainnet so the controller can switch
+      { rpcUrl: NETWORKS.mainnet.rpcUrl },
+    ];
+
+    _cartridgeConnector = new ControllerProvider({
+      chains,
       // No policies for Session 1 – user always signs manually
       // Sessions 2+ will add staking/swap policy entries
       policies: [],
+      // Allow Cartridge to handle its own UI
+      lazyload: false,
     });
   }
   return _cartridgeConnector;
