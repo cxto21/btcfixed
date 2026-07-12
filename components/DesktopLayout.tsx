@@ -126,7 +126,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             <DropdownNavItem
               label="Community"
               items={[
-                { name: 'Telegram', href: '/community' },
+                { name: 'Telegram', href: 'https://t.me/+umoVSGsajrY2M2Vh' },
                 { name: 'Twitter', href: '/community' },
                 { name: 'About Us', href: '/about' },
               ]}

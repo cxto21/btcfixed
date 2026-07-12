@@ -249,7 +249,7 @@ const AuthScreen: React.FC = () => {
             <DropdownNavItem
               label="Community"
               items={[
-                { name: 'Telegram', id: 'telegram', href: '/community' },
+                { name: 'Telegram', id: 'telegram', href: 'https://t.me/+umoVSGsajrY2M2Vh' },
                 { name: 'Twitter', id: 'twitter', href: '/community' },
                 { name: 'About Us', id: 'about', href: '/about' },
               ]}
