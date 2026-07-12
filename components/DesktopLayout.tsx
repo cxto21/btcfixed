@@ -38,7 +38,7 @@ const DropdownNavItem: React.FC<{
         {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 glass-effect rounded-xl p-4 shadow-2xl min-w-48 z-50">
+        <div className="absolute top-full left-0 mt-2 rounded-xl p-4 shadow-2xl min-w-48 z-50 border border-white/10" style={{ background: 'rgba(20, 20, 20, 0.92)', backdropFilter: 'blur(20px)' }}>
           <div className="flex flex-col gap-2">
             {items.map((item) => (
               <NavLink
