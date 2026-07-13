@@ -69,10 +69,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [availableWallets, setAvailableWallets] = useState<WalletInfo[]>([]);
   const cleanupRef = useRef<(() => void) | null>(null);
 
-  // Detect injected wallets after extension has time to inject (≈500 ms)
+  // Detect injected wallets after extension has time to inject
+  // Some extensions take longer to inject, so we retry with increasing delays
   useEffect(() => {
-    const t = setTimeout(() => setAvailableWallets(detectAvailableWallets()), 500);
-    return () => clearTimeout(t);
+    let mounted = true;
+    
+    const detectWallets = () => {
+      const wallets = detectAvailableWallets();
+      if (mounted && wallets.length > 0) {
+        setAvailableWallets(wallets);
+      }
+    };
+    
+    // Try immediately
+    detectWallets();
+    
+    // Retry with delays
+    const timers = [
+      setTimeout(detectWallets, 500),
+      setTimeout(detectWallets, 1500),
+      setTimeout(detectWallets, 3000),
+    ];
+    
+    return () => {
+      mounted = false;
+      timers.forEach(clearTimeout);
+    };
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -148,10 +170,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           `Wallet "${walletId}" is not installed. Please install the browser extension and try again.`,
         );
 
-      await wallet.enable({ starknetVersion: 'v5' });
+      // Try to enable the wallet with retry logic
+      let enabled = false;
+      let lastError: string | null = null;
+      
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          await wallet.enable({ starknetVersion: 'v5' });
+          enabled = true;
+          break;
+        } catch (err: unknown) {
+          lastError = err instanceof Error ? err.message : String(err);
+          // Wait a bit before retrying
+          if (attempt < 2) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+      }
 
-      const address = wallet.selectedAddress;
-      if (!address) throw new Error('Could not retrieve wallet address.');
+      if (!enabled) {
+        throw new Error(lastError || 'Failed to connect to wallet. Please try again.');
+      }
+
+      // Get address - try multiple methods
+      let address = wallet.selectedAddress;
+      
+      // If no address, try to get it from the accounts array
+      if (!address && wallet.account) {
+        const account = wallet.account as { address?: string };
+        address = account.address;
+      }
+
+      // If still no address, try calling enable again with different params
+      if (!address) {
+        try {
+          const accounts = await wallet.enable({});
+          if (accounts && accounts.length > 0) {
+            address = accounts[0];
+          }
+        } catch {
+          // Ignore error
+        }
+      }
+
+      if (!address) throw new Error('Could not retrieve wallet address. Please try again.');
 
       setState({
         isConnected: true,

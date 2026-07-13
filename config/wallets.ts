@@ -97,18 +97,41 @@ export function getCartridgeConnector(): InstanceType<typeof ControllerProvider>
 export function detectAvailableWallets(): WalletInfo[] {
   const found: WalletInfo[] = [];
   if (typeof window === 'undefined') return found;
+  
+  // Check for specific wallet objects
   if (window.starknet_argentX) found.push(WALLET_METADATA.argentX);
   if (window.starknet_braavos) found.push(WALLET_METADATA.braavos);
-  if (!found.length && window.starknet) found.push(WALLET_METADATA.any);
+  
+  // If no specific wallets found, check generic starknet object
+  if (!found.length && window.starknet) {
+    // Try to detect which wallet from the generic object
+    const sn = window.starknet as Record<string, unknown>;
+    if (sn.isArgent || sn.name?.toString().toLowerCase().includes('argent')) {
+      found.push(WALLET_METADATA.argentX);
+    } else if (sn.isBraavos || sn.name?.toString().toLowerCase().includes('braavos')) {
+      found.push(WALLET_METADATA.braavos);
+    } else {
+      found.push(WALLET_METADATA.any);
+    }
+  }
+  
   return found;
 }
 
 /** Returns the injected wallet object for a given wallet ID (not Cartridge). */
 export function getWalletObject(id: WalletId): StarknetBrowserWallet | null {
   if (typeof window === 'undefined') return null;
-  if (id === 'argentX') return window.starknet_argentX ?? null;
-  if (id === 'braavos') return window.starknet_braavos ?? null;
+  
+  // Try specific wallet objects first (newer extension versions)
+  if (id === 'argentX') {
+    return window.starknet_argentX ?? (window.starknet as StarknetBrowserWallet | undefined) ?? null;
+  }
+  if (id === 'braavos') {
+    return window.starknet_braavos ?? (window.starknet as StarknetBrowserWallet | undefined) ?? null;
+  }
   if (id === 'cartridge') return null; // handled separately via getCartridgeConnector()
+  
+  // Fallback to generic starknet object
   return window.starknet ?? null;
 }
 

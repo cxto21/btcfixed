@@ -175,9 +175,31 @@ const AuthScreen: React.FC = () => {
     connectWithAddress('privy', address, displayName ?? undefined);
   }, [privy.authenticated, privy.user, connectWithAddress]);
 
+  // Detect wallets with retry mechanism
   useEffect(() => {
-    const t = setTimeout(() => setDetected(detectAvailableWallets()), 600);
-    return () => clearTimeout(t);
+    let mounted = true;
+    
+    const detectWallets = () => {
+      const wallets = detectAvailableWallets();
+      if (mounted && wallets.length > 0) {
+        setDetected(wallets);
+      }
+    };
+    
+    // Try immediately
+    detectWallets();
+    
+    // Retry with delays
+    const timers = [
+      setTimeout(detectWallets, 500),
+      setTimeout(detectWallets, 1500),
+      setTimeout(detectWallets, 3000),
+    ];
+    
+    return () => {
+      mounted = false;
+      timers.forEach(clearTimeout);
+    };
   }, []);
 
   const handleConnect = async (walletId: WalletId) => {
