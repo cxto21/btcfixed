@@ -3,7 +3,7 @@ import ControllerProvider from '@cartridge/controller';
 import type { Call } from 'starknet';
 import { NETWORKS, ACTIVE_NETWORK } from './networks';
 
-export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'privy' | 'any';
+export type WalletId = 'argentX' | 'braavos' | 'cartridge' | 'privy' | 'xverse' | 'any';
 
 export interface WalletInfo {
   id: WalletId;
@@ -63,6 +63,12 @@ export const WALLET_METADATA: Record<WalletId, WalletInfo> = {
     icon: '',
     installUrl: 'https://www.starknet.io/en/ecosystem/wallets',
   },
+  xverse: {
+    id: 'xverse',
+    name: 'XVerse',
+    icon: 'https://xverse.app/favicon.ico',
+    installUrl: 'https://xverse.app/',
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -101,6 +107,11 @@ export function detectAvailableWallets(): WalletInfo[] {
   // Check for specific wallet objects
   if (window.starknet_argentX) found.push(WALLET_METADATA.argentX);
   if (window.starknet_braavos) found.push(WALLET_METADATA.braavos);
+  
+  // Check for XVerse (uses bitcoin provider or sats-connect)
+  if (window.bitcoin || (window as Record<string, unknown>).xverse) {
+    found.push(WALLET_METADATA.xverse);
+  }
   
   // If no specific wallets found, check generic starknet object
   if (!found.length && window.starknet) {

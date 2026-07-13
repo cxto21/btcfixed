@@ -75,7 +75,7 @@ export interface UseBalanceResult {
  */
 export function useBalance(
   address: string | null,
-  token: TokenConfig,
+  token: TokenConfig | undefined,
   pollMs = 15_000,
 ): UseBalanceResult {
   const [balance, setBalance] = useState<TokenBalance>({ raw: 0n, formatted: '0' });
@@ -83,7 +83,7 @@ export function useBalance(
   const [error, setError] = useState<string | null>(null);
 
   const fetchBalance = useCallback(async () => {
-    if (!address) return;
+    if (!address || !token) return;
     setIsLoading(true);
     setError(null);
 
@@ -103,7 +103,7 @@ export function useBalance(
     } finally {
       setIsLoading(false);
     }
-  }, [address, token.address, token.decimals]);
+  }, [address, token?.address, token?.decimals]);
 
   useEffect(() => {
     fetchBalance();

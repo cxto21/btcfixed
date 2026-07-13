@@ -156,10 +156,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---------------------------------------------------------------------------
+  // XVerse wallet connect path (via sats-connect)
+  // ---------------------------------------------------------------------------
+  const _connectXverse = useCallback(async (silent = false) => {
+    if (!silent) setState((s) => ({ ...s, isLoading: true, error: null }));
+
+    try {
+      const { request } = await import('sats-connect');
+      
+      const response = await request('wallet_connect', {
+        addresses: ['starknet'],
+      });
+      
+      if (response.status === 'error') {
+        throw new Error(response.message || 'XVerse connection failed');
+      }
+      
+      // Extract Starknet address from response
+      const starknetAddress = response.result?.addresses?.[0]?.address;
+      if (!starknetAddress) {
+        throw new Error('No Starknet address found in XVerse response');
+      }
+      
+      setState({
+        isPrivyConnected: false,
+        isCartridgeConnected: false,
+        address: starknetAddress,
+        chainId: 15760097351958044, // Starknet Sepolia (adjust for mainnet)
+        walletType: 'xverse',
+        isLoading: false,
+        error: null,
+      });
+    } catch (err: unknown) {
+      const rawMessage = err instanceof Error ? err.message : String(err);
+      let message: string;
+      
+      if (rawMessage.includes('cancel') || rawMessage.includes('rejected')) {
+        message = ''; // User cancelled
+      } else if (rawMessage.includes('No provider')) {
+        message = 'XVerse wallet not found. Please install the XVerse extension.';
+      } else {
+        message = rawMessage || 'XVerse connection failed. Please try again.';
+      }
+      
+      if (!silent && message) {
+        setState((s) => ({ ...s, isLoading: false, error: message }));
+      } else if (!silent) {
+        setState((s) => ({ ...s, isLoading: false, error: null }));
+      }
+    }
+  }, []);
+
+  // ---------------------------------------------------------------------------
   // Injected wallet connect path (Argent X / Braavos)
   // ---------------------------------------------------------------------------
   const _connect = useCallback(async (walletId: WalletId, silent = false) => {
     if (walletId === 'cartridge') return _connectCartridge(silent);
+    if (walletId === 'xverse') return _connectXverse(silent);
 
     if (!silent) setState((s) => ({ ...s, isLoading: true, error: null }));
 
