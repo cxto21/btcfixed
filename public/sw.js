@@ -1,5 +1,5 @@
 // BTCFixed Service Worker — offline cache + background sync
-const CACHE_NAME = 'btcfixed-v1';
+const CACHE_NAME = 'btcfixed-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
