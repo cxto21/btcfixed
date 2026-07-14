@@ -30,10 +30,10 @@ export default defineConfig({
         manualChunks: {
           // Split heavy vendor libraries for better caching
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-starknet': ['starknet', '@starknet-react/core'],
+          'vendor-starknet': ['starknet'],
           'vendor-ui': ['lucide-react'],
           // Privy is heavy - split it out
-          'vendor-privy': ['@privy-io/react-auth', '@privy-io/core'],
+          'vendor-privy': ['@privy-io/react-auth'],
           // Cartridge is heavy - split it out
           'vendor-cartridge': ['@cartridge/controller'],
         },
