@@ -234,7 +234,7 @@ const LandingPage: React.FC = () => {
       {/* ── Hero Section: Two Column Layout ── */}
       <main className="relative z-10 min-h-screen flex flex-col justify-center pt-24 pb-base">
         <div className="max-w-[1280px] mx-auto px-5 md:px-20 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[65vh]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[50vh]">
             
             {/* ── Left Column: Hero Content ── */}
             <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
@@ -331,18 +331,8 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
 
-        {/* ── Stats Cards (Bottom) ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-16 md:mt-24 mb-12 max-w-4xl mx-auto px-5">
-          {stats.map((stat) => (
-            <div key={stat.label} className="glass-card-premium rounded-xl p-6 flex flex-col items-center text-center hover:border-primary-container/20 transition-colors">
-              <span className="font-headline-lg text-primary-container mb-1">{stat.value}</span>
-              <span className="font-label-sm text-on-surface-variant/70 uppercase tracking-widest text-[10px] font-semibold">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Partners Carousel ── */}
-        <section className="w-full max-w-4xl mx-auto mt-12 opacity-40">
+        {/* ── Partners Carousel (directly below hero) ── */}
+        <section className="w-full max-w-4xl mx-auto mt-8 mb-8 opacity-40">
           <p className="text-center text-[10px] font-label-sm text-on-surface-variant uppercase tracking-[0.3em] mb-6 font-bold">
             POWERED BY THE BEST
           </p>
