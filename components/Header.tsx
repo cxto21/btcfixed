@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-3">
             <NavLink to="/" className="flex items-center justify-center hover:opacity-90 transition-opacity">
               <img
-                src="/BTCFixed-Logotype.png?v=2"
+                src="/hero-bg-v2.png"
                 alt="BTCFixed"
                 className="h-16 w-auto object-contain"
               />

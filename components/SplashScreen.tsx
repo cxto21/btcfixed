@@ -66,7 +66,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         {/* Background Decor - "B" watermark, top-right, smaller, 35% opacity */}
         <div className="absolute top-[-30px] right-[-30px] opacity-[0.35] pointer-events-none">
           <img 
-            src="/BTCFixed-Logotype.png?v=2" 
+            src="/hero-bg-v2.png" 
             alt="" 
             className="w-[220px] h-[220px] object-contain"
           />

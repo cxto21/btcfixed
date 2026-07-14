@@ -81,7 +81,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         <img
           alt=""
           className="absolute left-1/2 top-[5%] -translate-x-1/2 w-full max-w-4xl h-auto opacity-10 mix-blend-screen select-none pointer-events-none"
-          src="/BTCFixed-Logotype.png?v=2"
+          src="/hero-bg-v2.png"
         />
         <div className="absolute -right-20 bottom-0 w-[600px] h-[600px] blur-[100px] opacity-10 bg-primary/30 rounded-full" />
       </div>
@@ -93,7 +93,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             <NavLink to="/" className="flex items-center justify-center hover:opacity-80 transition-opacity">
               <div className="h-8 overflow-hidden flex items-center justify-center">
                 <img
-                  src="/BTCFixed-Logotype.png?v=2"
+                  src="/hero-bg-v2.png"
                   alt="BTCFixed"
                   className="h-36 w-auto object-contain"
                 />
@@ -163,7 +163,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               <div className="flex items-center gap-2">
                 <div className="hidden lg:flex items-center gap-2 glass-effect px-3 py-1.5 rounded-full">
                   <img
-                    src="/BTCFixed-Logotype.png?v=2"
+                    src="/hero-bg-v2.png"
                     alt="BTCFixed"
                     className="h-5 w-auto object-contain"
                   />
@@ -227,7 +227,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           <div className="hidden lg:flex flex-col items-center justify-center w-80 flex-shrink-0">
             <div className="glass-effect rounded-2xl p-8 text-center space-y-6">
               <img
-                src="/BTCFixed-Logotype.png?v=2"
+                src="/hero-bg-v2.png"
                 alt="BTCFixed"
                 className="h-28 w-auto object-contain mx-auto"
               />
@@ -268,7 +268,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
               <img
-                src="/BTCFixed-Logotype.png?v=2"
+                src="/hero-bg-v2.png"
                 alt="BTCFixed"
                 className="h-6 w-auto object-contain"
               />
