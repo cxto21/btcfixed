@@ -227,7 +227,7 @@ const AuthScreen: React.FC = () => {
         <img
           alt=""
           className="absolute left-1/2 top-[5%] -translate-x-1/2 w-full max-w-4xl h-auto opacity-10 mix-blend-screen select-none pointer-events-none"
-          src="/B-Background.png"
+          src="/BTCFixed-Logotype.png"
         />
         <div className="absolute -right-20 bottom-0 w-[600px] h-[600px] blur-[100px] opacity-10 bg-primary/30 rounded-full" />
       </div>
