@@ -125,7 +125,7 @@ const PublicNav: React.FC = () => {
           <NavLink to="/" className="flex items-center justify-center hover:opacity-80 transition-opacity">
             <div className="h-8 overflow-hidden flex items-center justify-center">
               <img
-                src="/BTCFixed-Logotype.png"
+                src="/BTCFixed-Logotype.png?v=2"
                 alt="BTCFixed"
                 className="h-36 w-auto object-contain"
               />

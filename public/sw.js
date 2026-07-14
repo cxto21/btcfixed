@@ -1,5 +1,5 @@
 // BTCFixed Service Worker — offline cache + background sync
-const CACHE_NAME = 'btcfixed-v2';
+const CACHE_NAME = 'btcfixed-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -36,11 +36,10 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (url.origin !== location.origin) return;
 
-  // Cache-first for static assets (JS, CSS, images, fonts)
+  // Cache-first for static assets (JS, CSS, fonts)
   if (
     url.pathname.startsWith('/assets/') ||
     url.pathname.startsWith('/icons/') ||
-    url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.svg') ||
     url.pathname.endsWith('.woff2')
   ) {
@@ -52,6 +51,20 @@ self.addEventListener('fetch', (event) => {
           return res;
         })
       )
+    );
+    return;
+  }
+
+  // Network-first for images (PNG, JPG, etc.) — always fetch fresh
+  if (url.pathname.endsWith('.png') || url.pathname.endsWith('.jpg') || url.pathname.endsWith('.jpeg')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }

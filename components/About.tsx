@@ -50,7 +50,7 @@ const About: React.FC = () => {
         <img
           alt=""
           className="absolute left-1/2 top-[5%] -translate-x-1/2 w-full max-w-4xl h-auto opacity-10 mix-blend-screen select-none pointer-events-none"
-          src="/BTCFixed-Logotype.png"
+          src="/BTCFixed-Logotype.png?v=2"
         />
         <div className="absolute -right-20 bottom-0 w-[600px] h-[600px] blur-[100px] opacity-10 bg-primary/30 rounded-full" />
       </div>
@@ -64,7 +64,7 @@ const About: React.FC = () => {
           {/* Title */}
           <div className="mb-12">
             <img
-              src="/BTCFixed-Logotype.png"
+              src="/BTCFixed-Logotype.png?v=2"
               alt="BTCFixed"
               className="h-32 md:h-40 w-auto object-contain mx-auto mb-6"
             />
@@ -192,7 +192,7 @@ const About: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
               <img
-                src="/BTCFixed-Logotype.png"
+                src="/BTCFixed-Logotype.png?v=2"
                 alt="BTCFixed"
                 className="h-6 w-auto object-contain"
               />

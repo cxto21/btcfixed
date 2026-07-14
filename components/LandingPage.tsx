@@ -137,7 +137,7 @@ const LandingPage: React.FC = () => {
         <img
           alt=""
           className="absolute left-1/2 top-[5%] -translate-x-1/2 w-full max-w-4xl h-auto opacity-10 mix-blend-screen select-none pointer-events-none"
-          src="/BTCFixed-Logotype.png"
+          src="/BTCFixed-Logotype.png?v=2"
         />
         <div className="absolute -right-20 bottom-0 w-[600px] h-[600px] blur-[100px] opacity-10 bg-primary/30 rounded-full" />
       </div>
@@ -149,7 +149,7 @@ const LandingPage: React.FC = () => {
             <NavLink to="/" className="flex items-center justify-center hover:opacity-80 transition-opacity">
               <div className="h-8 overflow-hidden flex items-center justify-center">
                 <img
-                  src="/BTCFixed-Logotype.png"
+                  src="/BTCFixed-Logotype.png?v=2"
                   alt="BTCFixed"
                   className="h-36 w-auto object-contain"
                 />
@@ -210,7 +210,7 @@ const LandingPage: React.FC = () => {
           {/* Title */}
           <div className="mb-6">
             <img
-              src="/BTCFixed-Logotype.png"
+              src="/BTCFixed-Logotype.png?v=2"
               alt="BTCFixed"
               className="h-40 md:h-52 w-auto object-contain mx-auto mb-2"
             />
@@ -328,7 +328,7 @@ const LandingPage: React.FC = () => {
             <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
               <div className="flex items-center gap-2">
                 <img
-                  src="/BTCFixed-Logotype.png"
+                  src="/BTCFixed-Logotype.png?v=2"
                   alt="BTCFixed"
                   className="h-6 w-auto object-contain"
                 />
