@@ -26,6 +26,18 @@ export default defineConfig({
       // Ensure starkzap tree-shakes server-only modules
       // MistCash SDK contains heavy ZK proof WASM — externalize to avoid OOM during build
       external: ['@mistcash/sdk', '@mistcash/config', 'garaga'],
+      output: {
+        manualChunks: {
+          // Split heavy vendor libraries for better caching
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-starknet': ['starknet', '@starknet-react/core'],
+          'vendor-ui': ['lucide-react'],
+          // Privy is heavy - split it out
+          'vendor-privy': ['@privy-io/react-auth', '@privy-io/core'],
+          // Cartridge is heavy - split it out
+          'vendor-cartridge': ['@cartridge/controller'],
+        },
+      },
     },
   },
 });

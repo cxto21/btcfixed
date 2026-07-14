@@ -4,25 +4,6 @@ import { Shield, Lock, Zap, Globe, Users, ArrowRight, ChevronDown, ChevronUp, Co
 import { ACTIVE_NETWORK_CONFIG } from '../config/networks';
 
 const shimmerKeyframes = `
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-.gh-btn-shimmer::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(192,192,192,0.15) 40%, rgba(255,255,255,0.35) 50%, rgba(192,192,192,0.15) 60%, transparent 100%);
-  transform: translateX(-100%);
-  pointer-events: none;
-}
-.gh-btn-shimmer:hover::before {
-  animation: shimmer 1.2s ease-in-out;
-}
-.gh-btn-shimmer:hover {
-  box-shadow: 0 0 20px rgba(192,192,192,0.3), 0 0 40px rgba(192,192,192,0.15);
-  border-color: #c0c0c0;
-}
 @keyframes logo-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -50,6 +31,30 @@ const triviaQuestions = [
     level: 'Level 1: The Genesis Block',
     question: 'Who is the creator of Bitcoin?',
     options: ['Satoshi Nakamoto', 'Hal Finney', 'Vitalik Buterin', 'Nick Szabo'],
+    correct: 0,
+  },
+  {
+    level: 'Level 2: Mining',
+    question: 'What is the block reward for Bitcoin mining?',
+    options: ['100 BTC', '50 BTC', '6.25 BTC', '21 BTC'],
+    correct: 2,
+  },
+  {
+    level: 'Level 3: Supply',
+    question: 'What is the maximum supply of Bitcoin?',
+    options: ['21 million', '100 million', '1 million', 'Unlimited'],
+    correct: 0,
+  },
+  {
+    level: 'Level 4: Technology',
+    question: 'What consensus algorithm does Bitcoin use?',
+    options: ['Proof of Stake', 'Proof of Work', 'Delegated PoS', 'Proof of Authority'],
+    correct: 1,
+  },
+  {
+    level: 'Level 5: History',
+    question: 'In what year was the Bitcoin whitepaper published?',
+    options: ['2008', '2010', '2006', '2012'],
     correct: 0,
   },
 ];
@@ -127,13 +132,6 @@ const features = [
   },
 ];
 
-const stats = [
-  { label: 'APR (STAKING)', value: '5.25%' },
-  { label: 'DEX', value: 'AVNU' },
-  { label: 'LENDING', value: 'Vesu' },
-  { label: 'NETWORK', value: 'Starknet' },
-];
-
 const partnerLogos = [
   { name: 'Starkware', src: 'https://mintcdn.com/avnu/_JpzWk4ZjyPdn4Yr/images/companies/Starkware.png?fit=max&auto=format&n=_JpzWk4ZjyPdn4Yr&q=85&s=95e3c13aa6dc7a960f162cecedaf9278', white: true },
   { name: 'Ready', src: 'https://mintcdn.com/avnu/_JpzWk4ZjyPdn4Yr/images/companies/ready.png?fit=max&auto=format&n=_JpzWk4ZjyPdn4Yr&q=85&s=15aae26bd380f2fb085bda6b03ae3f8a', white: true },
@@ -145,15 +143,41 @@ const partnerLogos = [
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [score, setScore] = useState(0);
+  const [completed, setCompleted] = useState(false);
+
+  const trivia = triviaQuestions[currentQuestion];
+  const progress = ((currentQuestion + 1) / triviaQuestions.length) * 100;
 
   const handleAnswer = (index: number) => {
+    if (showResult) return;
     setSelectedAnswer(index);
     setShowResult(true);
+    if (index === trivia.correct) {
+      setScore(score + 1);
+    }
   };
 
-  const trivia = triviaQuestions[0];
+  const handleNext = () => {
+    if (currentQuestion < triviaQuestions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedAnswer(null);
+      setShowResult(false);
+    } else {
+      setCompleted(true);
+    }
+  };
+
+  const handleRestart = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setScore(0);
+    setCompleted(false);
+  };
 
   return (
     <div className="min-h-screen bg-background text-on-background relative overflow-hidden">
@@ -163,7 +187,7 @@ const LandingPage: React.FC = () => {
         <img
           alt=""
           className="w-full h-full object-cover"
-          src="/hero-bg-v2.png"
+          src="https://lh3.googleusercontent.com/aida/AP1WRLt9OUTO0wNpeISA6SXuhK0Ko1fEuA04dGiG5Toe6_9D5rQP0_6BKRb08Pae8gu0uLLCGcUcA84RSOutWVtSd54nE15SfOLIC0r5TIqO0bBMcWFNeDHZisfnEHPdLp36xdkRlklyLk4CZpZMAb1qqYQz93VvIU70zPH_8NEoKo5pkS0T4Ch6bHOFBCLGIbF2G6TGhsF1a-8Y-laYjUIVfxNfun-Ht8zAde1qCFpEVkMaNXROO5JGirt1YmvF"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40"></div>
         <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(247, 147, 26, 0.08) 0%, transparent 70%)' }}></div>
@@ -253,13 +277,13 @@ const LandingPage: React.FC = () => {
                   href="https://github.com/cxto21/btcfixed"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="gh-btn-shimmer bg-white/5 backdrop-blur-md border border-white/10 text-on-surface font-label-md text-label-md px-8 py-4 rounded-lg font-bold hover:bg-white/10 active:scale-95 transition-all flex items-center gap-3"
+                  className="bg-white/5 backdrop-blur-md border border-white/10 text-on-surface font-label-md text-label-md px-8 py-4 rounded-lg font-bold hover:bg-white/10 active:scale-95 transition-all flex items-center gap-2 orange-glow-subtle"
                 >
-                  <svg viewBox="0 0 16 16" width="20" height="20" fill="#8b949e" className="group-hover:fill-white transition-colors">
+                  <svg viewBox="0 0 16 16" width="18" height="18" fill="#8b949e" className="group-hover:fill-white transition-colors">
                     <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
                   </svg>
                   <span className="text-[#8b949e] group-hover:text-white transition-colors tracking-wider">
-                    Open Source on GitHub
+                    Open Source
                   </span>
                 </a>
               </div>
@@ -269,63 +293,99 @@ const LandingPage: React.FC = () => {
             <div className="relative flex justify-center items-center h-full min-h-[400px]">
               {/* Trivia Overlay Card */}
               <div className="relative z-10 glass-card-premium rounded-2xl p-8 w-full max-w-[480px] animate-in fade-in zoom-in-95 duration-1000 border-white/10 hover:border-primary-container/20 transition-colors duration-500">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center border border-primary-container/30">
-                      <span className="text-primary-container text-[22px] font-bold">₿</span>
+                {completed ? (
+                  /* Completed State */
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 rounded-full bg-primary-container/20 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-3xl">{score === triviaQuestions.length ? '🏆' : score >= 3 ? '🎉' : '💪'}</span>
                     </div>
-                    <span className="font-label-md text-on-surface-variant/80 uppercase tracking-widest text-[11px] font-semibold">Bitcoin Trivia</span>
+                    <h3 className="text-primary-container font-headline-lg text-[18px] mb-2">Quiz Complete!</h3>
+                    <p className="text-on-surface text-[28px] font-bold mb-2">{score}/{triviaQuestions.length}</p>
+                    <p className="text-on-surface-variant/70 text-sm mb-6">
+                      {score === triviaQuestions.length ? 'Perfect score! You\'re a Bitcoin expert!' : 
+                       score >= 3 ? 'Great job! You know your Bitcoin!' : 
+                       'Keep learning about Bitcoin!'}
+                    </p>
+                    <button
+                      onClick={handleRestart}
+                      className="bg-primary-container text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all orange-glow-subtle uppercase tracking-wide"
+                    >
+                      Play Again
+                    </button>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-                    <span className="text-primary-container text-[14px]">🏆</span>
-                    <span className="font-label-sm text-on-surface text-[10px] font-bold uppercase tracking-wider">Novice</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-primary-container/90 font-headline-lg text-[16px] mb-1 font-medium tracking-wide">{trivia.level}</h3>
-                    <p className="font-headline-lg text-on-surface text-[22px] leading-tight">{trivia.question}</p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 gap-3 mt-6">
-                    {trivia.options.map((option, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleAnswer(index)}
-                        className={`flex items-center gap-4 w-full p-4 rounded-xl border transition-all text-left group ${
-                          showResult && index === trivia.correct
-                            ? 'border-green-500/50 bg-green-500/10'
-                            : showResult && index === selectedAnswer
-                            ? 'border-red-500/50 bg-red-500/10'
-                            : 'border-white/5 bg-white/5 hover:border-primary-container/40 hover:bg-primary-container/5'
-                        }`}
-                        disabled={showResult}
-                      >
-                        <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-label-md font-bold transition-colors ${
-                          showResult && index === trivia.correct
-                            ? 'bg-green-500/20 text-green-400'
-                            : showResult && index === selectedAnswer
-                            ? 'bg-red-500/20 text-red-400'
-                            : 'bg-white/5 text-on-surface-variant group-hover:text-primary-container'
-                        }`}>
-                          {String.fromCharCode(65 + index)}
+                ) : (
+                  /* Question State */
+                  <>
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center border border-primary-container/30">
+                          <span className="text-primary-container text-[22px] font-bold">₿</span>
+                        </div>
+                        <span className="font-label-md text-on-surface-variant/80 uppercase tracking-widest text-[11px] font-semibold">Bitcoin Trivia</span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                        <span className="text-primary-container text-[14px]">🏆</span>
+                        <span className="font-label-sm text-on-surface text-[10px] font-bold uppercase tracking-wider">
+                          {score}/{triviaQuestions.length}
                         </span>
-                        <span className="font-body-md text-on-surface/90">{option}</span>
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className="pt-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-label-sm text-on-surface-variant/60">Progress</span>
-                      <span className="font-label-sm text-primary-container font-bold">20%</span>
+                      </div>
                     </div>
-                    <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary-container w-[20%] rounded-full shadow-[0_0_8px_rgba(247,147,26,0.5)]"></div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-primary-container/90 font-headline-lg text-[16px] mb-1 font-medium tracking-wide">{trivia.level}</h3>
+                        <p className="font-headline-lg text-on-surface text-[22px] leading-tight">{trivia.question}</p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-3 mt-6">
+                        {trivia.options.map((option, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleAnswer(index)}
+                            className={`flex items-center gap-4 w-full p-4 rounded-xl border transition-all text-left group ${
+                              showResult && index === trivia.correct
+                                ? 'border-green-500/50 bg-green-500/10'
+                                : showResult && index === selectedAnswer
+                                ? 'border-red-500/50 bg-red-500/10'
+                                : 'border-white/5 bg-white/5 hover:border-primary-container/40 hover:bg-primary-container/5'
+                            }`}
+                            disabled={showResult}
+                          >
+                            <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-label-md font-bold transition-colors ${
+                              showResult && index === trivia.correct
+                                ? 'bg-green-500/20 text-green-400'
+                                : showResult && index === selectedAnswer
+                                ? 'bg-red-500/20 text-red-400'
+                                : 'bg-white/5 text-on-surface-variant group-hover:text-primary-container'
+                            }`}>
+                              {String.fromCharCode(65 + index)}
+                            </span>
+                            <span className="font-body-md text-on-surface/90">{option}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {showResult && (
+                        <button
+                          onClick={handleNext}
+                          className="w-full mt-4 bg-primary-container text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all orange-glow-subtle uppercase tracking-wide"
+                        >
+                          {currentQuestion < triviaQuestions.length - 1 ? 'Next Question' : 'See Results'}
+                        </button>
+                      )}
+                      
+                      <div className="pt-6">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-label-sm text-on-surface-variant/60">Progress</span>
+                          <span className="font-label-sm text-primary-container font-bold">{Math.round(progress)}%</span>
+                        </div>
+                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-primary-container rounded-full shadow-[0_0_8px_rgba(247,147,26,0.5)] transition-all duration-500" style={{ width: `${progress}%` }}></div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
