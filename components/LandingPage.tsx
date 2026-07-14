@@ -33,7 +33,26 @@ const shimmerKeyframes = `
 .logo-carousel-track:hover {
   animation-play-state: paused;
 }
+.glass-card-premium {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+.orange-glow-subtle {
+  box-shadow: 0 0 20px rgba(247, 147, 26, 0.15);
+}
 `;
+
+const triviaQuestions = [
+  {
+    level: 'Level 1: The Genesis Block',
+    question: 'Who is the creator of Bitcoin?',
+    options: ['Satoshi Nakamoto', 'Hal Finney', 'Vitalik Buterin', 'Nick Szabo'],
+    correct: 0,
+  },
+];
 
 const DropdownNavItem: React.FC<{ label: string; items: {name: string; id: string; href?: string}[] }> = ({ label, items }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,10 +128,10 @@ const features = [
 ];
 
 const stats = [
-  { label: 'APR (Staking)', value: '5.25%' },
+  { label: 'APR (STAKING)', value: '5.25%' },
   { label: 'DEX', value: 'AVNU' },
-  { label: 'Lending', value: 'Vesu' },
-  { label: 'Network', value: 'Starknet' },
+  { label: 'LENDING', value: 'Vesu' },
+  { label: 'NETWORK', value: 'Starknet' },
 ];
 
 const partnerLogos = [
@@ -126,20 +145,28 @@ const partnerLogos = [
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showResult, setShowResult] = useState(false);
+
+  const handleAnswer = (index: number) => {
+    setSelectedAnswer(index);
+    setShowResult(true);
+  };
+
+  const trivia = triviaQuestions[0];
 
   return (
     <div className="min-h-screen bg-background text-on-background relative overflow-hidden">
       <style dangerouslySetInnerHTML={{ __html: shimmerKeyframes }} />
-      {/* ── Background Blur Orbs ── */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute -left-1/4 top-0 w-[800px] h-[800px] blur-[120px] opacity-20 bg-primary/40 rounded-full animate-pulse" />
-        {/* Large "B" watermark — positioned upper area behind the hero */}
+      {/* ── Background ── */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden">
         <img
           alt=""
-          className="absolute left-1/2 top-[5%] -translate-x-1/2 w-full max-w-4xl h-auto opacity-10 mix-blend-screen select-none pointer-events-none"
+          className="w-full h-full object-cover"
           src="/hero-bg-v2.png"
         />
-        <div className="absolute -right-20 bottom-0 w-[600px] h-[600px] blur-[100px] opacity-10 bg-primary/30 rounded-full" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40"></div>
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(247, 147, 26, 0.08) 0%, transparent 70%)' }}></div>
       </div>
 
       {/* ── Floating Navigation ── */}
@@ -204,65 +231,120 @@ const LandingPage: React.FC = () => {
         </div>
       </header>
 
-      {/* ── Hero Section ── */}
-      <main className="relative z-10 min-h-screen flex flex-col justify-center items-center py-20 px-6 md:px-40">
-        <section className="max-w-4xl mx-auto relative z-10 text-center flex flex-col items-center">
-          {/* Title */}
-          <div className="mb-6">
-            <img
-              src="/hero-bg-v2.png"
-              alt="BTCFixed"
-              className="h-40 md:h-52 w-auto object-contain mx-auto mb-2"
-            />
-            <div className="w-48 h-2.5 bg-primary mx-auto rounded-full" />
-          </div>
-
-          {/* Subtitle */}
-          <p className="font-headline-md text-headline-md max-w-2xl text-on-surface-variant mb-10">
-            Built for true BTC lovers staying ahead simply and securely: Private Lend, Private Transfer, Private Swap, Private Borrow, Shielded Send, Shielded Swap.
-          </p>
-
-          {/* CTA + Open Source in same row */}
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <button
-              onClick={() => navigate('/app')}
-              className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded-full font-bold hover:opacity-80 active:scale-95 transition-all shadow-lg shadow-primary/20 text-lg"
-            >
-              GET STARTED
-            </button>
-
-            <a
-              href="https://github.com/cxto21/btcfixed"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gh-btn-shimmer inline-flex items-center gap-3 px-8 py-3 rounded-full bg-[#21262d] border border-[#30363d] hover:border-[#8b949e] transition-all group font-label-caps text-label-caps font-bold text-lg relative overflow-hidden"
-            >
-              <svg viewBox="0 0 16 16" width="18" height="18" fill="#8b949e" className="group-hover:fill-white transition-colors relative z-10">
-                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-              </svg>
-              <span className="text-[#8b949e] group-hover:text-white transition-colors tracking-wider relative z-10">
-                Open Source on GitHub
-              </span>
-            </a>
-          </div>
-        </section>
-
-        {/* ── Stats Bar ── */}
-        <section id="stats" className="w-full max-w-4xl mx-auto mt-20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat) => (
-              <div key={stat.label} className="glass-effect rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-primary font-display-hero">{stat.value}</p>
-                <p className="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-widest mt-1">{stat.label}</p>
+      {/* ── Hero Section: Two Column Layout ── */}
+      <main className="relative z-10 min-h-screen flex flex-col justify-center pt-24 pb-base">
+        <div className="max-w-[1280px] mx-auto px-5 md:px-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[65vh]">
+            
+            {/* ── Left Column: Hero Content ── */}
+            <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
+              <div className="w-16 h-1 bg-primary-container rounded-full shadow-[0_0_10px_rgba(247,147,26,0.3)]"></div>
+              <h1 className="font-body-lg text-[18px] md:text-[20px] text-on-surface-variant leading-relaxed max-w-xl">
+                Built for true BTC lovers staying ahead simply and securely: Private Lend, Private Transfer, Private Swap, Private Borrow, Shielded Send, Shielded Swap.
+              </h1>
+              <div className="flex flex-wrap gap-4 pt-4 md:flex-nowrap">
+                <button
+                  onClick={() => navigate('/app')}
+                  className="bg-primary-container text-on-primary font-label-md text-label-md px-8 py-4 rounded-lg font-bold hover:brightness-110 active:scale-95 transition-all orange-glow-subtle flex items-center gap-2 uppercase tracking-wide"
+                >
+                  GET STARTED
+                </button>
+                <a
+                  href="https://github.com/cxto21/btcfixed"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gh-btn-shimmer bg-white/5 backdrop-blur-md border border-white/10 text-on-surface font-label-md text-label-md px-8 py-4 rounded-lg font-bold hover:bg-white/10 active:scale-95 transition-all flex items-center gap-3"
+                >
+                  <svg viewBox="0 0 16 16" width="20" height="20" fill="#8b949e" className="group-hover:fill-white transition-colors">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                  </svg>
+                  <span className="text-[#8b949e] group-hover:text-white transition-colors tracking-wider">
+                    Open Source on GitHub
+                  </span>
+                </a>
               </div>
-            ))}
+            </div>
+
+            {/* ── Right Column: Trivia Card ── */}
+            <div className="relative flex justify-center items-center h-full min-h-[400px]">
+              {/* Trivia Overlay Card */}
+              <div className="relative z-10 glass-card-premium rounded-2xl p-8 w-full max-w-[480px] animate-in fade-in zoom-in-95 duration-1000 border-white/10 hover:border-primary-container/20 transition-colors duration-500">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center border border-primary-container/30">
+                      <span className="text-primary-container text-[22px] font-bold">₿</span>
+                    </div>
+                    <span className="font-label-md text-on-surface-variant/80 uppercase tracking-widest text-[11px] font-semibold">Bitcoin Trivia</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                    <span className="text-primary-container text-[14px]">🏆</span>
+                    <span className="font-label-sm text-on-surface text-[10px] font-bold uppercase tracking-wider">Novice</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-primary-container/90 font-headline-lg text-[16px] mb-1 font-medium tracking-wide">{trivia.level}</h3>
+                    <p className="font-headline-lg text-on-surface text-[22px] leading-tight">{trivia.question}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-3 mt-6">
+                    {trivia.options.map((option, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleAnswer(index)}
+                        className={`flex items-center gap-4 w-full p-4 rounded-xl border transition-all text-left group ${
+                          showResult && index === trivia.correct
+                            ? 'border-green-500/50 bg-green-500/10'
+                            : showResult && index === selectedAnswer
+                            ? 'border-red-500/50 bg-red-500/10'
+                            : 'border-white/5 bg-white/5 hover:border-primary-container/40 hover:bg-primary-container/5'
+                        }`}
+                        disabled={showResult}
+                      >
+                        <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-label-md font-bold transition-colors ${
+                          showResult && index === trivia.correct
+                            ? 'bg-green-500/20 text-green-400'
+                            : showResult && index === selectedAnswer
+                            ? 'bg-red-500/20 text-red-400'
+                            : 'bg-white/5 text-on-surface-variant group-hover:text-primary-container'
+                        }`}>
+                          {String.fromCharCode(65 + index)}
+                        </span>
+                        <span className="font-body-md text-on-surface/90">{option}</span>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <div className="pt-6">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-label-sm text-on-surface-variant/60">Progress</span>
+                      <span className="font-label-sm text-primary-container font-bold">20%</span>
+                    </div>
+                    <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary-container w-[20%] rounded-full shadow-[0_0_8px_rgba(247,147,26,0.5)]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
+        </div>
+
+        {/* ── Stats Cards (Bottom) ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-16 md:mt-24 mb-12 max-w-4xl mx-auto px-5">
+          {stats.map((stat) => (
+            <div key={stat.label} className="glass-card-premium rounded-xl p-6 flex flex-col items-center text-center hover:border-primary-container/20 transition-colors">
+              <span className="font-headline-lg text-primary-container mb-1">{stat.value}</span>
+              <span className="font-label-sm text-on-surface-variant/70 uppercase tracking-widest text-[10px] font-semibold">{stat.label}</span>
+            </div>
+          ))}
+        </div>
 
         {/* ── Partners Carousel ── */}
-        <section className="w-full max-w-4xl mx-auto mt-16">
-          <p className="text-center text-[10px] font-label-caps text-on-surface-variant uppercase tracking-[0.3em] mb-6">
-            Powered by the best
+        <section className="w-full max-w-4xl mx-auto mt-12 opacity-40">
+          <p className="text-center text-[10px] font-label-sm text-on-surface-variant uppercase tracking-[0.3em] mb-6 font-bold">
+            POWERED BY THE BEST
           </p>
           <div className="relative overflow-hidden">
             {/* Left fade */}
